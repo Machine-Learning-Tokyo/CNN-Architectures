@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="mobile-web-app-capable" content="yes">
     <title>
-        Implementation of MobileNet - HackMD
+        Implementation of VGGNet - HackMD
     </title>
     <link rel="icon" type="image/png" href="https://hackmd.io/favicon.png">
     <link rel="apple-touch-icon" href="https://hackmd.io/apple-touch-icon.png">
@@ -34,287 +34,138 @@
 </head>
 
 <body>
-    <div id="doc" class="markdown-body container-fluid comment-enabled" data-hard-breaks="true" style="position: relative;"><h1 id="Implementation-of-MobileNet"><a class="anchor hidden-xs" href="#Implementation-of-MobileNet" title="Implementation-of-MobileNet"><span class="octicon octicon-link"></span></a>Implementation of MobileNet</h1><p><br><span style="font-size:14pt;">We will use the tensorflow.keras Functional API to build MobileNet</span><br>
-(<a href="https://arxiv.org/pdf/1704.04861.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1704.04861.pdf</a>)</p><hr><p>In the paper we can read:</p><blockquote>
-<p><strong>[i]</strong> “All layers are followed by a batchnorm and ReLU nonlinearity”.</p>
-</blockquote><br><p>We will also make use of the following Table <strong>[ii]</strong>:</p><img src="https://raw.githubusercontent.com/Machine-Learning-Tokyo/DL-workshop-series/master/Part%20I%20-%20Convolution%20Operations/images/MobileNet/MobileNet.png" width="500"><br><p>as well the following Diagram <strong>[iii]</strong> of the <em>Mobilenet block</em>:</p><img src="https://raw.githubusercontent.com/Machine-Learning-Tokyo/DL-workshop-series/master/Part%20I%20-%20Convolution%20Operations/images/MobileNet/MobileNet_block.png" width="150"><h2 id="Network-architecture"><a class="anchor hidden-xs" href="#Network-architecture" title="Network-architecture"><span class="octicon octicon-link"></span></a>Network architecture</h2><p>The network starts with a (Conv, BatchNorm, ReLU) block and continues with a series of <strong>Mobilenet blocks</strong> before the final <em>Avg Pool</em> and <em>Fully Connected</em> layers.</p><br><h3 id="Mobilenet-block"><a class="anchor hidden-xs" href="#Mobilenet-block" title="Mobilenet-block"><span class="octicon octicon-link"></span></a>Mobilenet block</h3><p>The <em>Mobilenet block</em> is depicted at the bottom right figure of the above image. Specifically it consists of 6 layers:</p><ol>
-<li>a 3x3 <em>Depth Wise Convolution</em> layer</li>
-<li>a <em>Batch Normalization</em> layer (<strong>[i]</strong>)</li>
-<li>a <em>Rectified Linear Unit (ReLU)</em> activation layer (<strong>[i]</strong>)</li>
-<li>a 1x1 <em>Convolutional</em> layer</li>
-<li>a <em>Batch Normalization</em> layer</li>
-<li>a <em>Rectified Linear Unit (ReLU)</em> activation layer</li>
-</ol><hr><h2 id="Workflow"><a class="anchor hidden-xs" href="#Workflow" title="Workflow"><span class="octicon octicon-link"></span></a>Workflow</h2><p>We will:</p><ol>
+    <div id="doc" class="markdown-body container-fluid comment-enabled" data-hard-breaks="true" style="position: relative;"><h1 id="Implementation-of-VGGNet"><a class="anchor hidden-xs" href="#Implementation-of-VGGNet" title="Implementation-of-VGGNet"><span class="octicon octicon-link"></span></a>Implementation of VGGNet</h1><p><br><span style="font-size:14pt;">We will use the tensorflow.keras Functional API to build VGG</span><br>
+(<a href="https://arxiv.org/pdf/1409.1556.pdf" target="_blank" rel="noopener">https://arxiv.org/pdf/1409.1556.pdf</a>)</p><hr><p>In the paper we can read:</p><blockquote>
+<p><strong>[i]</strong> “All hidden layers are equipped with the rectification (ReLU (Krizhevsky et al., 2012)) non-linearity.”</p>
+<p><strong>[ii]</strong> “Max-pooling is performed over a 2 × 2 pixel window, with stride 2.”</p>
+</blockquote><br><p>We will also use the following Diagram <strong>[iii]</strong>:</p><img src="https://raw.githubusercontent.com/Machine-Learning-Tokyo/DL-workshop-series/master/Part%20I%20-%20Convolution%20Operations/images/VGG.png" width="500"><hr><h2 id="Network-architecture"><a class="anchor hidden-xs" href="#Network-architecture" title="Network-architecture"><span class="octicon octicon-link"></span></a>Network architecture</h2><ul>
+<li>
+<p>The network consists of 5 <em>Convolutional</em> blocks and 3 <em>Fully Connected</em> Layers</p>
+</li>
+<li>
+<p>Each Convolutional block consists of 2 or more Convolutional layers and a Max Pool layer</p>
+</li>
+</ul><hr><h2 id="Workflow"><a class="anchor hidden-xs" href="#Workflow" title="Workflow"><span class="octicon octicon-link"></span></a>Workflow</h2><p>We will:</p><ol>
 <li>import the neccesary layers</li>
-<li>write a helper function for the MobileNet block <strong>[iii]</strong></li>
-<li>build the stem of the model</li>
-<li>use these helper functions to build main part of the model.</li>
+<li>write the code for the <em>Convolution blocks</em></li>
+<li>write the code for the <em>Dense layers</em></li>
+<li>build the model</li>
 </ol><hr><h3 id="1-Imports"><a class="anchor hidden-xs" href="#1-Imports" title="1-Imports"><span class="octicon octicon-link"></span></a>1. Imports</h3><p><strong>Code:</strong></p><blockquote>
-<pre><code class="python hljs"><span class="hljs-keyword">from</span> tensorflow.keras.layers <span class="hljs-keyword">import</span> Input, DepthwiseConv2D, \
-     Conv2D, BatchNormalization, ReLU, AvgPool2D, Flatten, Dense
+<pre><code class="python hljs"><span class="hljs-keyword">from</span> tensorflow.keras.layers <span class="hljs-keyword">import</span> Input, Conv2D, \
+     MaxPool2D, Flatten, Dense
 </code></pre>
-</blockquote><hr><h3 id="2-MobileNet-block"><a class="anchor hidden-xs" href="#2-MobileNet-block" title="2-MobileNet-block"><span class="octicon octicon-link"></span></a>2. MobileNet block</h3><p>Next, we will build the <em>Mobilenet block</em> as a function that will</p><ul>
-<li>take as input:
+</blockquote><hr><h3 id="2-Convolution-blocks"><a class="anchor hidden-xs" href="#2-Convolution-blocks" title="2-Convolution-blocks"><span class="octicon octicon-link"></span></a>2. <em>Convolution blocks</em></h3><p>We start with the input layer:</p><p><strong>Code:</strong></p><blockquote>
+<pre><code class="python hljs">input = Input(shape=(<span class="hljs-number">224</span>, <span class="hljs-number">224</span>, <span class="hljs-number">3</span>))
+</code></pre>
+</blockquote><br><h4 id="1st-block"><a class="anchor hidden-xs" href="#1st-block" title="1st-block"><span class="octicon octicon-link"></span></a>1st block</h4><p>from the paper:</p><blockquote>
 <ul>
-<li>a tensor (<strong><code>x</code></strong>)</li>
-<li>the number of filters for the Convolutional layer (<strong><code>filters</code></strong>)</li>
-<li>the strides for the Depthwise Convolutional layer (<strong><code>strides</code></strong>)</li>
+<li>conv3-64</li>
+<li>conv3-64</li>
+<li>maxpool</li>
 </ul>
-</li>
-<li>run:
+</blockquote><p><strong>Code:</strong></p><blockquote>
+<pre><code class="python hljs">x = Conv2D(filters=<span class="hljs-number">64</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(input)
+x = Conv2D(filters=<span class="hljs-number">64</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = MaxPool2D(pool_size=<span class="hljs-number">2</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(x)
+</code></pre>
+</blockquote><br><h4 id="2nd-block"><a class="anchor hidden-xs" href="#2nd-block" title="2nd-block"><span class="octicon octicon-link"></span></a>2nd block</h4><p>from the paper:</p><blockquote>
 <ul>
-<li>apply a 3x3 <em>Depthwise Convolution layer</em> with <strong><code>strides</code></strong> strides followed by a <em>Batch Normalization</em> and a <em>ReLU</em> activation</li>
-<li>apply a 1x1 <em>Convolution layer</em> with <strong><code>filters</code></strong> filters followed by a <em>Batch Normalization</em> and a <em>ReLU</em> activation</li>
+<li>conv3-128</li>
+<li>conv3-128</li>
+<li>maxpool</li>
 </ul>
-</li>
-<li>return the tensor</li>
-</ul><p>and will return the tensor <strong><code>output</code></strong>.</p><p><strong>Code:</strong></p><blockquote>
-<pre><code class="python hljs"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">mobilenet_block</span><span class="hljs-params">(x, filters, strides)</span>:</span>
-    x = DepthwiseConv2D(kernel_size=<span class="hljs-number">3</span>, strides=strides, padding=<span class="hljs-string">'same'</span>)(x)
-    x = BatchNormalization()(x)
-    x = ReLU()(x)
+</blockquote><p><strong>Code:</strong></p><blockquote>
+<pre><code class="python hljs">x = Conv2D(filters=<span class="hljs-number">128</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = Conv2D(filters=<span class="hljs-number">128</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = MaxPool2D(pool_size=<span class="hljs-number">2</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(x)
+</code></pre>
+</blockquote><br><h4 id="3rd-block"><a class="anchor hidden-xs" href="#3rd-block" title="3rd-block"><span class="octicon octicon-link"></span></a>3rd block</h4><p>from the paper:</p><blockquote>
+<ul>
+<li>conv3-256</li>
+<li>conv3-256</li>
+<li>conv3-256</li>
+<li>maxpool</li>
+</ul>
+</blockquote><p><strong>Code:</strong></p><blockquote>
+<pre><code class="python hljs">x = Conv2D(filters=<span class="hljs-number">256</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = Conv2D(filters=<span class="hljs-number">256</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = Conv2D(filters=<span class="hljs-number">256</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = MaxPool2D(pool_size=<span class="hljs-number">2</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(x)
+</code></pre>
+</blockquote><br><h4 id="4th-and-5th-block"><a class="anchor hidden-xs" href="#4th-and-5th-block" title="4th-and-5th-block"><span class="octicon octicon-link"></span></a>4th and 5th block</h4><p>from the paper:</p><blockquote>
+<ul>
+<li>conv3-512</li>
+<li>conv3-512</li>
+<li>conv3-512</li>
+<li>maxpool</li>
+</ul>
+</blockquote><p><strong>Code:</strong> (x2)</p><blockquote>
+<pre><code class="python hljs">x = Conv2D(filters=<span class="hljs-number">512</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = Conv2D(filters=<span class="hljs-number">512</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = Conv2D(filters=<span class="hljs-number">512</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = MaxPool2D(pool_size=<span class="hljs-number">2</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(x)
 
-    x = Conv2D(filters=filters, kernel_size=<span class="hljs-number">1</span>, strides=<span class="hljs-number">1</span>, padding=<span class="hljs-string">'same'</span>)(x)
-    x = BatchNormalization()(x)
-    x = ReLU()(x)
-    <span class="hljs-keyword">return</span> x
+x = Conv2D(filters=<span class="hljs-number">512</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = Conv2D(filters=<span class="hljs-number">512</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = Conv2D(filters=<span class="hljs-number">512</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = MaxPool2D(pool_size=<span class="hljs-number">2</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(x)
 </code></pre>
-</blockquote><br><p>At <strong>[ii]</strong> one can see the following pattern after the first Convolution layer:</p><ul>
-<li>Conv dw/s1</li>
-<li>Conv/s1</li>
-</ul><p>These two lines consist one Mobilenet block.</p><ul>
-<li>the number after the <em>s</em> of the first line is the strides of the Depthwise layer</li>
-<li>the last number of the <em>Filter Shape</em> column of the second line is the number of filters of the Convolution layer</li>
-</ul><br><p>For example, this is the first Mobilenet block of <strong>[ii]</strong>:</p><table>
-<thead>
-<tr>
-<th>Type / Stride</th>
-<th style="text-align:center">Filter Shape</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Conv dw/s<strong>1</strong></td>
-<td style="text-align:center">3x3x32 dw</td>
-</tr>
-<tr>
-<td>Conv/s1</td>
-<td style="text-align:center">1x1x32x<strong>64</strong></td>
-</tr>
-</tbody>
-</table><p>The corresponding call of the mobilenet_block() function would be:</p><blockquote>
-<p><code>mobilenet_block(x, fitlers=64, strides=1)</code></p>
-</blockquote><hr><h3 id="3-Stem-of-the-model"><a class="anchor hidden-xs" href="#3-Stem-of-the-model" title="3-Stem-of-the-model"><span class="octicon octicon-link"></span></a>3. Stem of the model</h3><p>From <strong>[ii]</strong>:</p><table>
-<thead>
-<tr>
-<th>Type / Stride</th>
-<th style="text-align:center">Filter Shape</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Conv/s2</td>
-<td style="text-align:center">3x3x3x32</td>
-</tr>
-</tbody>
-</table><p><strong>Code:</strong></p><blockquote>
-<pre><code class="python hljs">INPUT_SHAPE = <span class="hljs-number">224</span>, <span class="hljs-number">224</span>, <span class="hljs-number">3</span>
-
-input = Input(INPUT_SHAPE)
-x = Conv2D(filters=<span class="hljs-number">32</span>, kernel_size=<span class="hljs-number">3</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(input)
-x = BatchNormalization()(x)
-x = ReLU()(x)
-</code></pre>
-</blockquote><hr><h3 id="4-Main-part-of-the-model"><a class="anchor hidden-xs" href="#4-Main-part-of-the-model" title="4-Main-part-of-the-model"><span class="octicon octicon-link"></span></a>4. Main part of the model</h3><p>From <strong>[ii]</strong>:</p><table>
-<thead>
-<tr>
-<th>Type / Stride</th>
-<th style="text-align:center">Filter Shape</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Conv dw/s1</td>
-<td style="text-align:center">3x3x32 dw</td>
-</tr>
-<tr>
-<td>Conv/s1</td>
-<td style="text-align:center">1x1x32x64</td>
-</tr>
-</tbody>
-</table><p><strong>Code:</strong></p><blockquote>
-<pre><code class="python hljs">x = mobilenet_block(x, filters=<span class="hljs-number">64</span>, strides=<span class="hljs-number">1</span>)
-</code></pre>
-</blockquote><hr><p>From <strong>[ii]</strong>:</p><table>
-<thead>
-<tr>
-<th>Type / Stride</th>
-<th style="text-align:center">Filter Shape</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Conv dw/s2</td>
-<td style="text-align:center">3x3x64 dw</td>
-</tr>
-<tr>
-<td>Conv/s1</td>
-<td style="text-align:center">1x1x64x128</td>
-</tr>
-<tr>
-<td>Conv dw/s1</td>
-<td style="text-align:center">3x3x128 dw</td>
-</tr>
-<tr>
-<td>Conv/s1</td>
-<td style="text-align:center">1x1x128x128</td>
-</tr>
-</tbody>
-</table><p><strong>Code:</strong></p><blockquote>
-<pre><code class="python hljs">x = mobilenet_block(x, filters=<span class="hljs-number">128</span>, strides=<span class="hljs-number">2</span>)
-x = mobilenet_block(x, filters=<span class="hljs-number">128</span>, strides=<span class="hljs-number">1</span>)
-</code></pre>
-</blockquote><hr><p>From <strong>[ii]</strong>:</p><table>
-<thead>
-<tr>
-<th>Type / Stride</th>
-<th style="text-align:center">Filter Shape</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Conv dw/s2</td>
-<td style="text-align:center">3x3x128 dw</td>
-</tr>
-<tr>
-<td>Conv/s1</td>
-<td style="text-align:center">1x1x128x256</td>
-</tr>
-<tr>
-<td>Conv dw/s1</td>
-<td style="text-align:center">3x3x256 dw</td>
-</tr>
-<tr>
-<td>Conv/s1</td>
-<td style="text-align:center">1x1x256x256</td>
-</tr>
-</tbody>
-</table><p><strong>Code:</strong></p><blockquote>
-<pre><code class="python hljs">x = mobilenet_block(x, filters=<span class="hljs-number">256</span>, strides=<span class="hljs-number">2</span>)
-x = mobilenet_block(x, filters=<span class="hljs-number">256</span>, strides=<span class="hljs-number">1</span>)
-</code></pre>
-</blockquote><hr><p>From <strong>[ii]</strong>:</p><table>
-<thead>
-<tr>
-<th style="text-align:right">Type / Stride</th>
-<th style="text-align:center">Filter Shape</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:right">Conv dw/s2</td>
-<td style="text-align:center">3x3x256 dw</td>
-</tr>
-<tr>
-<td style="text-align:right">Conv/s1</td>
-<td style="text-align:center">1x1x256x512</td>
-</tr>
-<tr>
-<td style="text-align:right">5x Conv dw/s1<br>Conv/s1</td>
-<td style="text-align:center">3x3x512 dw<br>1x1x512x512</td>
-</tr>
-</tbody>
-</table><p><strong>Code:</strong></p><blockquote>
-<pre><code class="python hljs">x = mobilenet_block(x, filters=<span class="hljs-number">512</span>, strides=<span class="hljs-number">2</span>)
-<span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> range(<span class="hljs-number">5</span>):
-    x = mobilenet_block(x, filters=<span class="hljs-number">512</span>, strides=<span class="hljs-number">1</span>)
-</code></pre>
-</blockquote><hr><p>From <strong>[ii]</strong>:</p><table>
-<thead>
-<tr>
-<th>Type / Stride</th>
-<th style="text-align:right">Filter Shape</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Conv dw/s2</td>
-<td style="text-align:right">3x3x512 dw</td>
-</tr>
-<tr>
-<td>Conv/s1</td>
-<td style="text-align:right">1x1x512x1024</td>
-</tr>
-<tr>
-<td>Conv dw/s1</td>
-<td style="text-align:right">3x3x1024 dw</td>
-</tr>
-<tr>
-<td>Conv/s1</td>
-<td style="text-align:right">1x1x1024x1024</td>
-</tr>
-<tr>
-<td>Avg Pool/s1</td>
-<td style="text-align:right">Pool 7x7</td>
-</tr>
-<tr>
-<td>FC/s1</td>
-<td style="text-align:right">1024x1000</td>
-</tr>
-<tr>
-<td>Softmax/s1</td>
-<td style="text-align:right">Classifier</td>
-</tr>
-</tbody>
-</table><p><strong>Code:</strong></p><blockquote>
-<pre><code class="python hljs">x = mobilenet_block(x, filters=<span class="hljs-number">1024</span>, strides=<span class="hljs-number">2</span>)
-x = mobilenet_block(x, filters=<span class="hljs-number">1024</span>, strides=<span class="hljs-number">1</span>)
-
-x = AvgPool2D(pool_size=<span class="hljs-number">7</span>, strides=<span class="hljs-number">1</span>)(x)
+</blockquote><hr><h3 id="3-Dense-layers"><a class="anchor hidden-xs" href="#3-Dense-layers" title="3-Dense-layers"><span class="octicon octicon-link"></span></a>3. Dense layers</h3><p>Before passing the output tensor of the last Convolutional layer to the first <code>Dense()</code> layer we flatten it by using the <code>Flatten()</code> layer.</p><p>from the paper:</p><blockquote>
+<ul>
+<li>FC-4096</li>
+<li>FC-4096</li>
+<li>FC-1000</li>
+<li>soft-max</li>
+</ul>
+</blockquote><p><strong>Code:</strong></p><blockquote>
+<pre><code class="python hljs">x = Flatten()(x)
+x = Dense(units=<span class="hljs-number">4096</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = Dense(units=<span class="hljs-number">4096</span>, activation=<span class="hljs-string">'relu'</span>)(x)
 output = Dense(units=<span class="hljs-number">1000</span>, activation=<span class="hljs-string">'softmax'</span>)(x)
 </code></pre>
-</blockquote><hr><h2 id="Final-code"><a class="anchor hidden-xs" href="#Final-code" title="Final-code"><span class="octicon octicon-link"></span></a>Final code</h2><p><strong>Code:</strong></p><pre><code class="python hljs"><span class="hljs-keyword">from</span> tensorflow.keras.layers <span class="hljs-keyword">import</span> Input, DepthwiseConv2D, \
-     Conv2D, BatchNormalization, ReLU, AvgPool2D, Flatten, Dense
+</blockquote><hr><h3 id="4-Model"><a class="anchor hidden-xs" href="#4-Model" title="4-Model"><span class="octicon octicon-link"></span></a>4. Model</h3><p>In order to build the <em>model</em> we will use the <code>tensorflow.keras.Model</code> object:</p><p><strong>Code:</strong></p><blockquote>
+<pre><code class="python hljs"><span class="hljs-keyword">from</span> tensorflow.keras <span class="hljs-keyword">import</span> Model
+</code></pre>
+</blockquote><p>To define the model we need the input tensor(s) and the output tensor(s).</p><p><strong>Code:</strong></p><blockquote>
+<pre><code class="python hljs">model = Model(inputs=input, outputs=output)
+</code></pre>
+</blockquote><hr><h2 id="Final-code"><a class="anchor hidden-xs" href="#Final-code" title="Final-code"><span class="octicon octicon-link"></span></a>Final code</h2><p><strong>Code:</strong></p><pre><code class="python hljs"><span class="hljs-keyword">from</span> tensorflow.keras.layers <span class="hljs-keyword">import</span> Input, Conv2D, \
+     MaxPool2D, Flatten, Dense
 
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">mobilenet_block</span><span class="hljs-params">(x, filters, strides)</span>:</span>
-    x = DepthwiseConv2D(kernel_size=<span class="hljs-number">3</span>, strides=strides, padding=<span class="hljs-string">'same'</span>)(x)
-    x = BatchNormalization()(x)
-    x = ReLU()(x)
+input = Input(shape=(<span class="hljs-number">224</span>, <span class="hljs-number">224</span>, <span class="hljs-number">3</span>))
 
-    x = Conv2D(filters=filters, kernel_size=<span class="hljs-number">1</span>, strides=<span class="hljs-number">1</span>, padding=<span class="hljs-string">'same'</span>)(x)
-    x = BatchNormalization()(x)
-    x = ReLU()(x)
-    <span class="hljs-keyword">return</span> x
+x = Conv2D(filters=<span class="hljs-number">64</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(input)
+x = Conv2D(filters=<span class="hljs-number">64</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = MaxPool2D(pool_size=<span class="hljs-number">2</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(x)
 
-INPUT_SHAPE = <span class="hljs-number">224</span>, <span class="hljs-number">224</span>, <span class="hljs-number">3</span>
+x = Conv2D(filters=<span class="hljs-number">128</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = Conv2D(filters=<span class="hljs-number">128</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = MaxPool2D(pool_size=<span class="hljs-number">2</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(x)
 
-input = Input(INPUT_SHAPE)
-x = Conv2D(filters=<span class="hljs-number">32</span>, kernel_size=<span class="hljs-number">3</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(input)
-x = BatchNormalization()(x)
-x = ReLU()(x)
+x = Conv2D(filters=<span class="hljs-number">256</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = Conv2D(filters=<span class="hljs-number">256</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = Conv2D(filters=<span class="hljs-number">256</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = MaxPool2D(pool_size=<span class="hljs-number">2</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(x)
 
-x = mobilenet_block(x, filters=<span class="hljs-number">64</span>, strides=<span class="hljs-number">1</span>)
+x = Conv2D(filters=<span class="hljs-number">512</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = Conv2D(filters=<span class="hljs-number">512</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = Conv2D(filters=<span class="hljs-number">512</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = MaxPool2D(pool_size=<span class="hljs-number">2</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(x)
 
-x = mobilenet_block(x, filters=<span class="hljs-number">128</span>, strides=<span class="hljs-number">2</span>)
-x = mobilenet_block(x, filters=<span class="hljs-number">128</span>, strides=<span class="hljs-number">1</span>)
+x = Conv2D(filters=<span class="hljs-number">512</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = Conv2D(filters=<span class="hljs-number">512</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = Conv2D(filters=<span class="hljs-number">512</span>, kernel_size=<span class="hljs-number">3</span>, padding=<span class="hljs-string">'same'</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = MaxPool2D(pool_size=<span class="hljs-number">2</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(x)
 
-x = mobilenet_block(x, filters=<span class="hljs-number">256</span>, strides=<span class="hljs-number">2</span>)
-x = mobilenet_block(x, filters=<span class="hljs-number">256</span>, strides=<span class="hljs-number">1</span>)
-
-x = mobilenet_block(x, filters=<span class="hljs-number">512</span>, strides=<span class="hljs-number">2</span>)
-<span class="hljs-keyword">for</span> _ <span class="hljs-keyword">in</span> range(<span class="hljs-number">5</span>):
-    x = mobilenet_block(x, filters=<span class="hljs-number">512</span>, strides=<span class="hljs-number">1</span>)
-  
-x = mobilenet_block(x, filters=<span class="hljs-number">1024</span>, strides=<span class="hljs-number">2</span>)
-x = mobilenet_block(x, filters=<span class="hljs-number">1024</span>, strides=<span class="hljs-number">1</span>)
-
-x = AvgPool2D(pool_size=<span class="hljs-number">7</span>, strides=<span class="hljs-number">1</span>)(x)
+x = Flatten()(x)
+x = Dense(units=<span class="hljs-number">4096</span>, activation=<span class="hljs-string">'relu'</span>)(x)
+x = Dense(units=<span class="hljs-number">4096</span>, activation=<span class="hljs-string">'relu'</span>)(x)
 output = Dense(units=<span class="hljs-number">1000</span>, activation=<span class="hljs-string">'softmax'</span>)(x)
 
 <span class="hljs-keyword">from</span> tensorflow.keras <span class="hljs-keyword">import</span> Model
 
 model = Model(inputs=input, outputs=output)
-</code></pre><hr><h2 id="Model-diagram"><a class="anchor hidden-xs" href="#Model-diagram" title="Model-diagram"><span class="octicon octicon-link"></span></a>Model diagram</h2><img src="https://github.com/Machine-Learning-Tokyo/CNN-Architectures/raw/master/Implementations/MobileNet/MobileNet_diagram.png"></div>
+</code></pre><hr><h2 id="Model-diagram"><a class="anchor hidden-xs" href="#Model-diagram" title="Model-diagram"><span class="octicon octicon-link"></span></a>Model diagram</h2><img src="https://github.com/Machine-Learning-Tokyo/CNN-Architectures/raw/master/Implementations/VGGNet/VGGNet_diagram.png"></div>
     <div class="ui-toc dropup unselectable hidden-print" style="display:none;">
         <div class="pull-right dropdown">
             <a id="tocLabel" class="ui-toc-label btn btn-default" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" title="Table of content">
@@ -322,16 +173,13 @@ model = Model(inputs=input, outputs=output)
             </a>
             <ul id="ui-toc" class="ui-toc-dropdown dropdown-menu" aria-labelledby="tocLabel">
                 <div class="toc"><ul class="nav">
-<li class=""><a href="#Implementation-of-MobileNet" title="Implementation of MobileNet">Implementation of MobileNet</a><ul class="nav">
-<li><a href="#Network-architecture" title="Network architecture">Network architecture</a><ul class="nav">
-<li><a href="#Mobilenet-block" title="Mobilenet block">Mobilenet block</a></li>
-</ul>
-</li>
+<li class=""><a href="#Implementation-of-VGGNet" title="Implementation of VGGNet">Implementation of VGGNet</a><ul class="nav">
+<li><a href="#Network-architecture" title="Network architecture">Network architecture</a></li>
 <li class=""><a href="#Workflow" title="Workflow">Workflow</a><ul class="nav">
 <li><a href="#1-Imports" title="1. Imports">1. Imports</a></li>
-<li><a href="#2-MobileNet-block" title="2. MobileNet block">2. MobileNet block</a></li>
-<li><a href="#3-Stem-of-the-model" title="3. Stem of the model">3. Stem of the model</a></li>
-<li class=""><a href="#4-Main-part-of-the-model" title="4. Main part of the model">4. Main part of the model</a></li>
+<li class=""><a href="#2-Convolution-blocks" title="2. Convolution blocks">2. Convolution blocks</a></li>
+<li><a href="#3-Dense-layers" title="3. Dense layers">3. Dense layers</a></li>
+<li><a href="#4-Model" title="4. Model">4. Model</a></li>
 </ul>
 </li>
 <li><a href="#Final-code" title="Final code">Final code</a></li>
@@ -345,16 +193,13 @@ model = Model(inputs=input, outputs=output)
     </div>
     <div id="ui-toc-affix" class="ui-affix-toc ui-toc-dropdown unselectable hidden-print" data-spy="affix" style="top:17px;display:none;" null null>
         <div class="toc"><ul class="nav">
-<li class=""><a href="#Implementation-of-MobileNet" title="Implementation of MobileNet">Implementation of MobileNet</a><ul class="nav">
-<li><a href="#Network-architecture" title="Network architecture">Network architecture</a><ul class="nav">
-<li><a href="#Mobilenet-block" title="Mobilenet block">Mobilenet block</a></li>
-</ul>
-</li>
+<li class=""><a href="#Implementation-of-VGGNet" title="Implementation of VGGNet">Implementation of VGGNet</a><ul class="nav">
+<li><a href="#Network-architecture" title="Network architecture">Network architecture</a></li>
 <li class=""><a href="#Workflow" title="Workflow">Workflow</a><ul class="nav">
 <li><a href="#1-Imports" title="1. Imports">1. Imports</a></li>
-<li><a href="#2-MobileNet-block" title="2. MobileNet block">2. MobileNet block</a></li>
-<li><a href="#3-Stem-of-the-model" title="3. Stem of the model">3. Stem of the model</a></li>
-<li class=""><a href="#4-Main-part-of-the-model" title="4. Main part of the model">4. Main part of the model</a></li>
+<li class=""><a href="#2-Convolution-blocks" title="2. Convolution blocks">2. Convolution blocks</a></li>
+<li><a href="#3-Dense-layers" title="3. Dense layers">3. Dense layers</a></li>
+<li><a href="#4-Model" title="4. Model">4. Model</a></li>
 </ul>
 </li>
 <li><a href="#Final-code" title="Final code">Final code</a></li>
