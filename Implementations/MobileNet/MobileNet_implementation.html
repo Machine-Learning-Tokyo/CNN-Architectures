@@ -67,8 +67,8 @@
 <li>apply a 1x1 <em>Convolution layer</em> with <strong><code>filters</code></strong> filters followed by a <em>Batch Normalization</em> and a <em>ReLU</em> activation</li>
 </ul>
 </li>
-<li>return the tensor</li>
-</ul><p>and will return the tensor <strong><code>output</code></strong>.</p><p><strong>Code:</strong></p><blockquote>
+<li>return the tensor <strong><code>output</code></strong>.</li>
+</ul><p><strong>Code:</strong></p><blockquote>
 <pre><code class="python hljs"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">mobilenet_block</span><span class="hljs-params">(x, filters, strides)</span>:</span>
     x = DepthwiseConv2D(kernel_size=<span class="hljs-number">3</span>, strides=strides, padding=<span class="hljs-string">'same'</span>)(x)
     x = BatchNormalization()(x)
@@ -329,9 +329,9 @@ model = Model(inputs=input, outputs=output)
 </li>
 <li class=""><a href="#Workflow" title="Workflow">Workflow</a><ul class="nav">
 <li><a href="#1-Imports" title="1. Imports">1. Imports</a></li>
-<li><a href="#2-MobileNet-block" title="2. MobileNet block">2. MobileNet block</a></li>
+<li class=""><a href="#2-MobileNet-block" title="2. MobileNet block">2. MobileNet block</a></li>
 <li><a href="#3-Stem-of-the-model" title="3. Stem of the model">3. Stem of the model</a></li>
-<li class=""><a href="#4-Main-part-of-the-model" title="4. Main part of the model">4. Main part of the model</a></li>
+<li><a href="#4-Main-part-of-the-model" title="4. Main part of the model">4. Main part of the model</a></li>
 </ul>
 </li>
 <li><a href="#Final-code" title="Final code">Final code</a></li>
@@ -351,10 +351,10 @@ model = Model(inputs=input, outputs=output)
 </ul>
 </li>
 <li class=""><a href="#Workflow" title="Workflow">Workflow</a><ul class="nav">
-<li><a href="#1-Imports" title="1. Imports">1. Imports</a></li>
-<li><a href="#2-MobileNet-block" title="2. MobileNet block">2. MobileNet block</a></li>
+<li class=""><a href="#1-Imports" title="1. Imports">1. Imports</a></li>
+<li class=""><a href="#2-MobileNet-block" title="2. MobileNet block">2. MobileNet block</a></li>
 <li><a href="#3-Stem-of-the-model" title="3. Stem of the model">3. Stem of the model</a></li>
-<li class=""><a href="#4-Main-part-of-the-model" title="4. Main part of the model">4. Main part of the model</a></li>
+<li><a href="#4-Main-part-of-the-model" title="4. Main part of the model">4. Main part of the model</a></li>
 </ul>
 </li>
 <li><a href="#Final-code" title="Final code">Final code</a></li>
