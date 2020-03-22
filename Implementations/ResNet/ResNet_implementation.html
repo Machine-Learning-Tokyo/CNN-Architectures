@@ -182,8 +182,7 @@ The downsampling at the right stream will take place at its Convolution layer.</
     <span class="hljs-keyword">return</span> x
 </code></pre>
 </blockquote><hr><h3 id="6-Model-code"><a class="anchor hidden-xs" href="#6-Model-code" title="6-Model-code"><span class="octicon octicon-link"></span></a>6. Model code</h3><p>Now we are ready to build the model:</p><p><strong>Code:</strong></p><blockquote>
-<pre><code class="python hljs">INPUT_SHAPE = <span class="hljs-number">224</span>, <span class="hljs-number">224</span>, <span class="hljs-number">3</span>
-input = Input(INPUT_SHAPE)
+<pre><code class="python hljs">input = Input(shape=(<span class="hljs-number">224</span>, <span class="hljs-number">224</span>, <span class="hljs-number">3</span>))
 
 x = conv_batchnorm_relu(input, filters=<span class="hljs-number">64</span>, kernel_size=<span class="hljs-number">7</span>, strides=<span class="hljs-number">2</span>)  <span class="hljs-comment"># [3]: 7x7, 64, strides 2</span>
 x = MaxPool2D(pool_size=<span class="hljs-number">3</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(x)  <span class="hljs-comment"># [3]: 3x3 max mool, strides 2</span>
@@ -250,8 +249,7 @@ model = Model(input, output)
     <span class="hljs-keyword">return</span> x
 
 
-INPUT_SHAPE = <span class="hljs-number">224</span>, <span class="hljs-number">224</span>, <span class="hljs-number">3</span>
-input = Input(INPUT_SHAPE)
+input = Input(shape=(<span class="hljs-number">224</span>, <span class="hljs-number">224</span>, <span class="hljs-number">3</span>))
 
 x = conv_batchnorm_relu(input, filters=<span class="hljs-number">64</span>, kernel_size=<span class="hljs-number">7</span>, strides=<span class="hljs-number">2</span>)  <span class="hljs-comment"># [3]: 7x7, 64, strides 2</span>
 x = MaxPool2D(pool_size=<span class="hljs-number">3</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(x)  <span class="hljs-comment"># [3]: 3x3 max mool, strides 2</span>
@@ -291,7 +289,7 @@ model = Model(input, output)
 </ul>
 </li>
 <li class=""><a href="#Final-code" title="Final code">Final code</a></li>
-<li class=""><a href="#Model-diagram" title="Model diagram">Model diagram</a></li>
+<li><a href="#Model-diagram" title="Model diagram">Model diagram</a></li>
 </ul>
 </li>
 </ul>
@@ -316,7 +314,7 @@ model = Model(input, output)
 </ul>
 </li>
 <li class=""><a href="#Final-code" title="Final code">Final code</a></li>
-<li class=""><a href="#Model-diagram" title="Model diagram">Model diagram</a></li>
+<li><a href="#Model-diagram" title="Model diagram">Model diagram</a></li>
 </ul>
 </li>
 </ul>
