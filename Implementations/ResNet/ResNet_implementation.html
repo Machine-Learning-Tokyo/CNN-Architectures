@@ -228,8 +228,8 @@ model = Model(input, output)
 
 <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">projection_block</span><span class="hljs-params">(tensor, filters, strides)</span>:</span>
     <span class="hljs-comment"># left stream</span>
-    x = conv_batchnorm_relu(tensor, filters=filters, kernel_size=<span class="hljs-number">1</span>, strides=<span class="hljs-number">1</span>)
-    x = conv_batchnorm_relu(x, filters=filters, kernel_size=<span class="hljs-number">3</span>, strides=strides)
+    x = conv_batchnorm_relu(tensor, filters=filters, kernel_size=<span class="hljs-number">1</span>, strides=strides)
+    x = conv_batchnorm_relu(x, filters=filters, kernel_size=<span class="hljs-number">3</span>, strides=<span class="hljs-number">1</span>)
     x = Conv2D(filters=<span class="hljs-number">4</span>*filters, kernel_size=<span class="hljs-number">1</span>, strides=<span class="hljs-number">1</span>)(x)  <span class="hljs-comment"># notice: filters=4*filters</span>
     x = BatchNormalization()(x)
 
@@ -266,7 +266,7 @@ output = Dense(<span class="hljs-number">1000</span>, activation=<span class="hl
 <span class="hljs-keyword">from</span> tensorflow.keras <span class="hljs-keyword">import</span> Model
 
 model = Model(input, output)
-</code></pre><hr><h2 id="Model-diagram"><a class="anchor hidden-xs" href="#Model-diagram" title="Model-diagram"><span class="octicon octicon-link"></span></a>Model diagram</h2><img src="https://github.com/Machine-Learning-Tokyo/CNN-Architectures/raw/master/Implementations/ResNet/ResNet_diagram.png"></div>
+</code></pre><hr><h2 id="Model-diagram"><a class="anchor hidden-xs" href="#Model-diagram" title="Model-diagram"><span class="octicon octicon-link"></span></a>Model diagram</h2><img src="https://raw.githubusercontent.com/Machine-Learning-Tokyo/CNN-Architectures/master/Implementations/ResNet/ResNet_diagram.svg?sanitize=true"></div>
     <div class="ui-toc dropup unselectable hidden-print" style="display:none;">
         <div class="pull-right dropdown">
             <a id="tocLabel" class="ui-toc-label btn btn-default" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" title="Table of content">
