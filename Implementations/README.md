@@ -1,5 +1,5 @@
 # CNN Architectures - implementations | MLT
-The idea of this repo is to show how one can implement a Convolutional Neural Network architecture based on the original paper. For each architecture there is:
+This repo is to show how to implement a Convolutional Neural Network architecture with the [tensorflow.keras Functional API](https://www.tensorflow.org/guide/keras/functional) based on the original paper. For each architecture there is:
 
 - the paper in which the architecture was originally published where we highlighted the parts needed for the implementation
 - a jupyter notebook with a step-by-step description of how to use this information to infer the structure of the model and code it
@@ -20,6 +20,9 @@ There is also a [series of videos](https://www.youtube.com/watch?v=rFpzCPcI6O0&l
   - [[Notebook]](https://github.com/Machine-Learning-Tokyo/CNN-Architectures/tree/master/Implementations/MobileNet) [[Video]](https://www.youtube.com/watch?v=ATXx6cTGquE&list=PLaPdEEY26UXyE3UchW0C742xh542yh0yI&index=4)
 - **ResNet**
   - [[Notebook]](https://github.com/Machine-Learning-Tokyo/CNN-Architectures/tree/master/Implementations/ResNet) [[Video]](https://www.youtube.com/watch?v=oeIMmtUroi0&list=PLaPdEEY26UXyE3UchW0C742xh542yh0yI&index=5)
+- **Xception**
+  - [[Notebook]](https://github.com/Machine-Learning-Tokyo/CNN-Architectures/tree/master/Implementations/Xception) [[Video]](https://www.youtube.com/watch?v=nMBCSroJ7bY&list=PLaPdEEY26UXyE3UchW0C742xh542yh0yI&index=6)
+
 
 ### Disclaimer
 
