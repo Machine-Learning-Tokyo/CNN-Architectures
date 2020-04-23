@@ -1,7 +1,8 @@
 # Implementation of GoogLeNet
 
-<br><span style="font-size:14pt;">We will use the tensorflow.keras Functional API to build GoogLeNet</span>
-(https://arxiv.org/pdf/1409.4842.pdf)
+We will use the [tensorflow.keras Functional API](https://www.tensorflow.org/guide/keras/functional) to build GoogLeNet from the original paper: “[Going Deeper with Convolutions](https://arxiv.org/abs/1409.4842)” by Christian Szegedy, Wei Liu, Yangqing Jia, Pierre Sermanet, Scott Reed, Dragomir Anguelov, Dumitru Erhan, Vincent Vanhoucke, Andrew Rabinovich.
+
+[Video tutorial](https://www.youtube.com/watch?v=fq2srEX7VV0&list=PLaPdEEY26UXyE3UchW0C742xh542yh0yI&index=3)
 
 ---
 
