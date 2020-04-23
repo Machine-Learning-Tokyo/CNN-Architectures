@@ -1,7 +1,9 @@
 # Implementation of SqueezeNet
 
-<br><span style="font-size:14pt;">We will use the tensorflow.keras Functional API to build SqueezeNet</span>
-(https://arxiv.org/pdf/1602.07360.pdf)
+
+We will use the [tensorflow.keras Functional API](https://www.tensorflow.org/guide/keras/functional) to build SqueezeNet from the original paper: “[SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and <0.5MB model size](https://arxiv.org/abs/1602.07360)” by Forrest N. Iandola, Song Han, Matthew W. Moskewicz, Khalid Ashraf, William J. Dally, Kurt Keutzer.
+
+[Video tutorial](https://www.youtube.com/watch?v=W4UbinapGMY&list=PLaPdEEY26UXyE3UchW0C742xh542yh0yI&index=7)
 
 ---
 
