@@ -1,7 +1,8 @@
 # Implementation of DenseNet
 
-<br><span style="font-size:14pt;">We will use the tensorflow.keras Functional API to build DenseNet</span>
-(https://arxiv.org/pdf/1608.06993.pdf)
+We will use the [tensorflow.keras Functional API](https://www.tensorflow.org/guide/keras/functional) to build DenseNet from the original paper: “[Densely Connected Convolutional Networks](https://arxiv.org/abs/1608.06993)” by Gao Huang, Zhuang Liu, Laurens van der Maaten, Kilian Q. Weinberger.
+
+[Video tutorial](https://www.youtube.com/watch?v=3ZPJyknZolE&list=PLaPdEEY26UXyE3UchW0C742xh542yh0yI&index=8)
 
 ---
 
