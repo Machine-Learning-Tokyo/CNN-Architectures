@@ -1,8 +1,9 @@
 # Implementation of AlexNet
 
-<br><span style="font-size:14pt;">We will use the tensorflow.keras Functional API to build AlexNet</span>
+We will use the [tensorflow.keras Functional API](https://www.tensorflow.org/guide/keras/functional) to build AlexNet from the original paper: “[ImageNet Classification with Deep Convolutional
+Neural Networks](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)” by Alex Krizhevsky, Ilya Sutskever and Geoffrey E. Hinton.
 
-(https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf)
+[Video tutorial](https://www.youtube.com/watch?v=rFpzCPcI6O0&list=PLaPdEEY26UXyE3UchW0C742xh542yh0yI&index=1)
 
 ---
 
