@@ -1,7 +1,8 @@
 # Implementation of Xception
 
-<br><span style="font-size:14pt;">We will use the tensorflow.keras Functional API to build Xception</span>
-(https://arxiv.org/pdf/1610.02357.pdf)
+We will use the [tensorflow.keras Functional API](https://www.tensorflow.org/guide/keras/functional) to build Xception from the original paper: “[Xception: Deep Learning with Depthwise Separable Convolutions](https://arxiv.org/abs/1610.02357)” by François Chollet.
+
+[Video tutorial](https://www.youtube.com/watch?v=nMBCSroJ7bY&list=PLaPdEEY26UXyE3UchW0C742xh542yh0yI&index=6)
 
 ---
 
