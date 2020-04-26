@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>
+        Implementation of ShuffleNet - HackMD
+    </title>
+    <link rel="icon" type="image/png" href="https://hackmd.io/favicon.png">
+    <link rel="apple-touch-icon" href="https://hackmd.io/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css" integrity="sha256-3iu9jgsy9TpTwXKb7bNQzqWekRX7pPK+2OLj3R922fo=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.5.0/octicons.min.css" integrity="sha256-QiWfLIsCT02Sdwkogf6YMiQlj4NE84MKkzEMkZnMGdg=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css" integrity="sha256-vtR0hSWRc3Tb26iuN2oZHt3KRUomwTufNIf5/4oeCyg=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@hackmd/emojify.js@2.1.0/dist/css/basic/emojify.min.css" integrity="sha256-UOrvMOsSDSrW6szVLe8ZDZezBxh5IoIfgTwdNDgTjiU=" crossorigin="anonymous" />
+    <style>
+        @charset "UTF-8";@import url(https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i|Source+Code+Pro:300,400,500|Source+Sans+Pro:300,300i,400,400i,600,600i|Source+Serif+Pro&subset=latin-ext);.hljs{display:block;background:#fff;padding:.5em;color:#333;overflow-x:auto}.hljs-comment,.hljs-meta{color:#969896}.hljs-emphasis,.hljs-quote,.hljs-string,.hljs-strong,.hljs-template-variable,.hljs-variable{color:#df5000}.hljs-keyword,.hljs-selector-tag,.hljs-type{color:#a71d5d}.hljs-attribute,.hljs-bullet,.hljs-literal,.hljs-number,.hljs-symbol{color:#0086b3}.hljs-built_in,.hljs-builtin-name{color:#005cc5}.hljs-name,.hljs-section{color:#63a35c}.hljs-tag{color:#333}.hljs-attr,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-id,.hljs-selector-pseudo,.hljs-title{color:#795da3}.hljs-addition{color:#55a532;background-color:#eaffea}.hljs-deletion{color:#bd2c00;background-color:#ffecec}.hljs-link{text-decoration:underline}.markdown-body{font-size:16px;line-height:1.5;word-wrap:break-word}.markdown-body:after,.markdown-body:before{display:table;content:""}.markdown-body:after{clear:both}.markdown-body>:first-child{margin-top:0!important}.markdown-body>:last-child{margin-bottom:0!important}.markdown-body a:not([href]){color:inherit;text-decoration:none}.markdown-body .absent{color:#c00}.markdown-body .anchor{float:left;padding-right:4px;margin-left:-20px;line-height:1}.markdown-body .anchor:focus{outline:none}.markdown-body blockquote,.markdown-body dl,.markdown-body ol,.markdown-body p,.markdown-body pre,.markdown-body table,.markdown-body ul{margin-top:0;margin-bottom:16px}.markdown-body hr{height:.25em;padding:0;margin:24px 0;background-color:#e7e7e7;border:0}.markdown-body blockquote{font-size:16px;padding:0 1em;color:#777;border-left:.25em solid #ddd}.markdown-body blockquote>:first-child{margin-top:0}.markdown-body blockquote>:last-child{margin-bottom:0}.markdown-body kbd,.popover kbd{display:inline-block;padding:3px 5px;font-size:11px;line-height:10px;color:#555;vertical-align:middle;background-color:#fcfcfc;border:1px solid #ccc;border-bottom-color:#bbb;border-radius:3px;box-shadow:inset 0 -1px 0 #bbb}.markdown-body .loweralpha{list-style-type:lower-alpha}.markdown-body h1,.markdown-body h2,.markdown-body h3,.markdown-body h4,.markdown-body h5,.markdown-body h6{margin-top:24px;margin-bottom:16px;font-weight:600;line-height:1.25}.markdown-body h1 .octicon-link,.markdown-body h2 .octicon-link,.markdown-body h3 .octicon-link,.markdown-body h4 .octicon-link,.markdown-body h5 .octicon-link,.markdown-body h6 .octicon-link{color:#000;vertical-align:middle;visibility:hidden}.markdown-body h1:hover .anchor,.markdown-body h2:hover .anchor,.markdown-body h3:hover .anchor,.markdown-body h4:hover .anchor,.markdown-body h5:hover .anchor,.markdown-body h6:hover .anchor{text-decoration:none}.markdown-body h1:hover .anchor .octicon-link,.markdown-body h2:hover .anchor .octicon-link,.markdown-body h3:hover .anchor .octicon-link,.markdown-body h4:hover .anchor .octicon-link,.markdown-body h5:hover .anchor .octicon-link,.markdown-body h6:hover .anchor .octicon-link{visibility:visible}.markdown-body h1 code,.markdown-body h1 tt,.markdown-body h2 code,.markdown-body h2 tt,.markdown-body h3 code,.markdown-body h3 tt,.markdown-body h4 code,.markdown-body h4 tt,.markdown-body h5 code,.markdown-body h5 tt,.markdown-body h6 code,.markdown-body h6 tt{font-size:inherit}.markdown-body h1{font-size:2em}.markdown-body h1,.markdown-body h2{padding-bottom:.3em;border-bottom:1px solid #eee}.markdown-body h2{font-size:1.5em}.markdown-body h3{font-size:1.25em}.markdown-body h4{font-size:1em}.markdown-body h5{font-size:.875em}.markdown-body h6{font-size:.85em;color:#777}.markdown-body ol,.markdown-body ul{padding-left:2em}.markdown-body ol.no-list,.markdown-body ul.no-list{padding:0;list-style-type:none}.markdown-body ol ol,.markdown-body ol ul,.markdown-body ul ol,.markdown-body ul ul{margin-top:0;margin-bottom:0}.markdown-body li>p{margin-top:16px}.markdown-body li+li{padding-top:.25em}.markdown-body dl{padding:0}.markdown-body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}.markdown-body dl dd{padding:0 16px;margin-bottom:16px}.markdown-body table{display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}.markdown-body table th{font-weight:700}.markdown-body table td,.markdown-body table th{padding:6px 13px;border:1px solid #ddd}.markdown-body table tr{background-color:#fff;border-top:1px solid #ccc}.markdown-body table tr:nth-child(2n){background-color:#f8f8f8}.markdown-body img{max-width:100%;box-sizing:content-box;background-color:#fff}.markdown-body img[align=right]{padding-left:20px}.markdown-body img[align=left]{padding-right:20px}.markdown-body .emoji{max-width:none;vertical-align:text-top;background-color:transparent}.markdown-body span.frame{display:block;overflow:hidden}.markdown-body span.frame>span{display:block;float:left;width:auto;padding:7px;margin:13px 0 0;overflow:hidden;border:1px solid #ddd}.markdown-body span.frame span img{display:block;float:left}.markdown-body span.frame span span{display:block;padding:5px 0 0;clear:both;color:#333}.markdown-body span.align-center{display:block;overflow:hidden;clear:both}.markdown-body span.align-center>span{display:block;margin:13px auto 0;overflow:hidden;text-align:center}.markdown-body span.align-center span img{margin:0 auto;text-align:center}.markdown-body span.align-right{display:block;overflow:hidden;clear:both}.markdown-body span.align-right>span{display:block;margin:13px 0 0;overflow:hidden;text-align:right}.markdown-body span.align-right span img{margin:0;text-align:right}.markdown-body span.float-left{display:block;float:left;margin-right:13px;overflow:hidden}.markdown-body span.float-left span{margin:13px 0 0}.markdown-body span.float-right{display:block;float:right;margin-left:13px;overflow:hidden}.markdown-body span.float-right>span{display:block;margin:13px auto 0;overflow:hidden;text-align:right}.markdown-body code,.markdown-body tt{padding:0;padding-top:.2em;padding-bottom:.2em;margin:0;font-size:85%;background-color:rgba(0,0,0,.04);border-radius:3px}.markdown-body code:after,.markdown-body code:before,.markdown-body tt:after,.markdown-body tt:before{letter-spacing:-.2em;content:"\00a0"}.markdown-body code br,.markdown-body tt br{display:none}.markdown-body del code{text-decoration:inherit}.markdown-body pre{word-wrap:normal}.markdown-body pre>code{padding:0;margin:0;font-size:100%;word-break:normal;white-space:pre;background:transparent;border:0}.markdown-body .highlight{margin-bottom:16px}.markdown-body .highlight pre{margin-bottom:0;word-break:normal}.markdown-body .highlight pre,.markdown-body pre{padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#f7f7f7;border-radius:3px}.markdown-body pre code,.markdown-body pre tt{display:inline;max-width:auto;padding:0;margin:0;overflow:visible;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}.markdown-body pre code:after,.markdown-body pre code:before,.markdown-body pre tt:after,.markdown-body pre tt:before{content:normal}.markdown-body .csv-data td,.markdown-body .csv-data th{padding:5px;overflow:hidden;font-size:12px;line-height:1;text-align:left;white-space:nowrap}.markdown-body .csv-data .blob-line-num{padding:10px 8px 9px;text-align:right;background:#fff;border:0}.markdown-body .csv-data tr{border-top:0}.markdown-body .csv-data th{font-weight:700;background:#f8f8f8;border-top:0}.news .alert .markdown-body blockquote{padding:0 0 0 40px;border:0 none}.activity-tab .news .alert .commits,.activity-tab .news .markdown-body blockquote{padding-left:0}.task-list-item{list-style-type:none}.task-list-item label{font-weight:400}.task-list-item.enabled label{cursor:pointer}.task-list-item+.task-list-item{margin-top:3px}.task-list-item-checkbox{float:left;margin:.31em 0 .2em -1.3em!important;vertical-align:middle;cursor:default!important}.markdown-body{padding-top:40px;padding-bottom:40px;max-width:758px;overflow:visible!important}.markdown-body .emoji{vertical-align:top}.markdown-body pre{border:inherit!important}.markdown-body code{color:inherit!important}.markdown-body pre code .wrapper{display:-moz-inline-flex;display:-ms-inline-flex;display:-o-inline-flex;display:inline-flex}.markdown-body pre code .gutter{float:left;overflow:hidden;-webkit-user-select:none;user-select:none}.markdown-body pre code .gutter.linenumber{text-align:right;position:relative;display:inline-block;cursor:default;z-index:4;padding:0 8px 0 0;min-width:20px;box-sizing:content-box;color:#afafaf!important;border-right:3px solid #6ce26c!important}.markdown-body pre code .gutter.linenumber>span:before{content:attr(data-linenumber)}.markdown-body pre code .code{float:left;margin:0 0 0 16px}.markdown-body .gist .line-numbers{border-left:none;border-top:none;border-bottom:none}.markdown-body .gist .line-data{border:none}.markdown-body .gist table{border-spacing:0;border-collapse:inherit!important}.markdown-body code[data-gist-id]{background:none;padding:0}.markdown-body code[data-gist-id]:after,.markdown-body code[data-gist-id]:before{content:""}.markdown-body code[data-gist-id] .blob-num{border:unset}.markdown-body code[data-gist-id] table{overflow:unset;margin-bottom:unset}.markdown-body code[data-gist-id] table tr{background:unset}.markdown-body[dir=rtl] pre{direction:ltr}.markdown-body[dir=rtl] code{direction:ltr;unicode-bidi:embed}.markdown-body .alert>p{margin-bottom:0}.markdown-body pre.abc,.markdown-body pre.flow-chart,.markdown-body pre.graphviz,.markdown-body pre.mermaid,.markdown-body pre.sequence-diagram,.markdown-body pre.vega{text-align:center;background-color:inherit;border-radius:0;white-space:inherit}.markdown-body pre.abc>code,.markdown-body pre.flow-chart>code,.markdown-body pre.graphviz>code,.markdown-body pre.mermaid>code,.markdown-body pre.sequence-diagram>code,.markdown-body pre.vega>code{text-align:left}.markdown-body pre.abc>svg,.markdown-body pre.flow-chart>svg,.markdown-body pre.graphviz>svg,.markdown-body pre.mermaid>svg,.markdown-body pre.sequence-diagram>svg,.markdown-body pre.vega>svg{max-width:100%;height:100%}.markdown-body pre>code.wrap{white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word}.markdown-body .alert>p,.markdown-body .alert>ul{margin-bottom:0}.markdown-body summary{display:list-item}.markdown-body summary:focus{outline:none}.markdown-body details summary{cursor:pointer}.markdown-body details:not([open])>:not(summary){display:none}.markdown-body figure{margin:1em 40px}.markdown-body .mark,.markdown-body mark{background-color:#fff1a7}.vimeo,.youtube{cursor:pointer;display:table;text-align:center;background-position:50%;background-repeat:no-repeat;background-size:contain;background-color:#000;overflow:hidden}.vimeo,.youtube{position:relative;width:100%}.youtube{padding-bottom:56.25%}.vimeo img{width:100%;object-fit:contain;z-index:0}.youtube img{object-fit:cover;z-index:0}.vimeo iframe,.youtube iframe,.youtube img{width:100%;height:100%;position:absolute;top:0;left:0}.vimeo iframe,.youtube iframe{vertical-align:middle;z-index:1}.vimeo .icon,.youtube .icon{position:absolute;height:auto;width:auto;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;opacity:.3;transition:opacity .2s;z-index:0}.vimeo:hover .icon,.youtube:hover .icon{opacity:.6;transition:opacity .2s}.slideshare .inner,.speakerdeck .inner{position:relative;width:100%}.slideshare .inner iframe,.speakerdeck .inner iframe{position:absolute;top:0;bottom:0;left:0;right:0;width:100%;height:100%}.MJX_Assistive_MathML{display:none}.ui-infobar{position:relative;z-index:2;max-width:760px;margin:25px auto -25px;padding:0 15px;color:#777}.toc .invisable-node{list-style-type:none}.ui-toc{position:fixed;bottom:20px;z-index:998}.ui-toc-label{opacity:.3;background-color:#ccc;border:none;transition:opacity .2s}.ui-toc .open .ui-toc-label{opacity:1;color:#fff;transition:opacity .2s}.ui-toc-label:focus{opacity:.3;background-color:#ccc;color:#000}.ui-toc-label:hover{opacity:1;background-color:#ccc;transition:opacity .2s}.ui-toc-dropdown{margin-top:23px;margin-bottom:20px;padding-left:10px;padding-right:10px;max-width:45vw;width:25vw;max-height:70vh;overflow:auto;text-align:inherit}.ui-toc-dropdown>.toc{max-height:calc(70vh - 100px);overflow:auto}.ui-toc-dropdown[dir=rtl] .nav{padding-right:0;letter-spacing:.0029em}.ui-toc-dropdown a{overflow:hidden;text-overflow:ellipsis;white-space:pre}.ui-toc-dropdown .nav>li>a{display:block;padding:4px 20px;font-size:13px;font-weight:500;color:#767676}.ui-toc-dropdown .nav>li:first-child:last-child > ul,.ui-toc-dropdown .toc.expand ul{display:block}.ui-toc-dropdown .nav>li>a:focus,.ui-toc-dropdown .nav>li>a:hover{padding-left:19px;color:#000;text-decoration:none;background-color:transparent;border-left:1px solid #000}.ui-toc-dropdown[dir=rtl] .nav>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav>li>a:hover{padding-right:19px;border-left:none;border-right:1px solid #000}.ui-toc-dropdown .nav>.active:focus>a,.ui-toc-dropdown .nav>.active:hover>a,.ui-toc-dropdown .nav>.active>a{padding-left:18px;font-weight:700;color:#000;background-color:transparent;border-left:2px solid #000}.ui-toc-dropdown[dir=rtl] .nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav>.active>a{padding-right:18px;border-left:none;border-right:2px solid #000}.ui-toc-dropdown .nav .nav{display:none;padding-bottom:10px}.ui-toc-dropdown .nav>.active>ul{display:block}.ui-toc-dropdown .nav .nav>li>a{padding-top:1px;padding-bottom:1px;padding-left:30px;font-size:12px;font-weight:400}.ui-toc-dropdown[dir=rtl] .nav .nav>li>a{padding-right:30px}.ui-toc-dropdown .nav .nav>li>ul>li>a{padding-top:1px;padding-bottom:1px;padding-left:40px;font-size:12px;font-weight:400}.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a{padding-right:40px}.ui-toc-dropdown .nav .nav>li>a:focus,.ui-toc-dropdown .nav .nav>li>a:hover{padding-left:29px}.ui-toc-dropdown[dir=rtl] .nav .nav>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav .nav>li>a:hover{padding-right:29px}.ui-toc-dropdown .nav .nav>li>ul>li>a:focus,.ui-toc-dropdown .nav .nav>li>ul>li>a:hover{padding-left:39px}.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a:hover{padding-right:39px}.ui-toc-dropdown .nav .nav>.active:focus>a,.ui-toc-dropdown .nav .nav>.active:hover>a,.ui-toc-dropdown .nav .nav>.active>a{padding-left:28px;font-weight:500}.ui-toc-dropdown[dir=rtl] .nav .nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>a{padding-right:28px}.ui-toc-dropdown .nav .nav>.active>.nav>.active:focus>a,.ui-toc-dropdown .nav .nav>.active>.nav>.active:hover>a,.ui-toc-dropdown .nav .nav>.active>.nav>.active>a{padding-left:38px;font-weight:500}.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active>a{padding-right:38px}.markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,sans-serif}html[lang^=ja] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ\ ゴシック,sans-serif}html[lang=zh-tw] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html[lang=zh-cn] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}html .markdown-body[lang^=ja]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ\ ゴシック,sans-serif}html .markdown-body[lang=zh-tw]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html .markdown-body[lang=zh-cn]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}html[lang^=ja] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Meiryo UI,MS PGothic,ＭＳ\ Ｐゴシック,sans-serif}html[lang=zh-tw] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Microsoft JhengHei UI,微軟正黑UI,sans-serif}html[lang=zh-cn] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Microsoft YaHei UI,微软雅黑UI,sans-serif}html .ui-toc-dropdown[lang^=ja]{font-family:Source Sans Pro,Helvetica,Arial,Meiryo UI,MS PGothic,ＭＳ\ Ｐゴシック,sans-serif}html .ui-toc-dropdown[lang=zh-tw]{font-family:Source Sans Pro,Helvetica,Arial,Microsoft JhengHei UI,微軟正黑UI,sans-serif}html .ui-toc-dropdown[lang=zh-cn]{font-family:Source Sans Pro,Helvetica,Arial,Microsoft YaHei UI,微软雅黑UI,sans-serif}.ui-affix-toc{position:fixed;top:0;max-width:15vw;max-height:70vh;overflow:auto}.back-to-top,.expand-toggle,.go-to-bottom{display:block;padding:4px 10px;margin-top:10px;margin-left:10px;font-size:12px;font-weight:500;color:#999}.back-to-top:focus,.back-to-top:hover,.expand-toggle:focus,.expand-toggle:hover,.go-to-bottom:focus,.go-to-bottom:hover{color:#563d7c;text-decoration:none}.back-to-top,.go-to-bottom{margin-top:0}.ui-user-icon{width:20px;height:20px;display:block;border-radius:3px;margin-top:2px;margin-bottom:2px;margin-right:5px;background-position:50%;background-repeat:no-repeat;background-size:cover}.ui-user-icon.small{width:18px;height:18px;display:inline-block;vertical-align:middle;margin:0 0 .2em}.ui-infobar>small>span{line-height:22px}.ui-infobar>small .dropdown{display:inline-block}.ui-infobar>small .dropdown a:focus,.ui-infobar>small .dropdown a:hover{text-decoration:none}.ui-published-note{color:#337ab7}.ui-published-note .fa{font-size:20px;vertical-align:top}.unselectable{-webkit-user-select:none;-o-user-select:none;user-select:none}@media print{blockquote,div,img,pre,table{page-break-inside:avoid!important}a[href]:after{font-size:12px!important}}.markdown-body.slides{position:relative;z-index:1;color:#222}.markdown-body.slides:before{content:"";display:block;position:absolute;top:0;left:0;right:0;bottom:0;z-index:-1;background-color:currentColor;box-shadow:0 0 0 50vw}.markdown-body.slides section[data-markdown]{position:relative;margin-bottom:1.5em;background-color:#fff;text-align:center}.markdown-body.slides section[data-markdown] code{text-align:left}.markdown-body.slides section[data-markdown]:before{content:"";display:block;padding-bottom:56.23%}.markdown-body.slides section[data-markdown]>div:first-child{position:absolute;top:50%;left:1em;right:1em;transform:translateY(-50%);max-height:100%;overflow:hidden}.markdown-body.slides section[data-markdown]>ul{display:inline-block}.markdown-body.slides>section>section+section:after{content:"";position:absolute;top:-1.5em;right:1em;height:1.5em;border:3px solid #777}body{font-smoothing:subpixel-antialiased!important;-webkit-font-smoothing:subpixel-antialiased!important;-moz-osx-font-smoothing:auto!important;text-shadow:0 0 1em transparent,1px 1px 1.2px rgba(0,0,0,.004);-webkit-overflow-scrolling:touch;letter-spacing:.025em}.focus,:focus{outline:none!important}::-moz-focus-inner{border:0!important}body{font-family:Source Sans Pro,Helvetica,Arial,sans-serif}html[lang^=ja] body{font-family:Source Sans Pro,Helvetica,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ\ ゴシック,sans-serif}html[lang=zh-tw] body{font-family:Source Sans Pro,Helvetica,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html[lang=zh-cn] body{font-family:Source Sans Pro,Helvetica,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}abbr[data-original-title],abbr[title]{cursor:help}body.modal-open{overflow-y:auto;padding-right:0!important}
+    </style>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js" integrity="sha256-3Jy/GbSLrg0o9y5Z5n1uw0qxZECH7C6OQpVBgNFYa0g=" crossorigin="anonymous"></script>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js" integrity="sha256-g6iAfvZp+nDQ2TdTR/VVKJf3bGro4ub5fvWSWVRi2NE=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js" integrity="sha256-8E4Is26QH0bD52WoQpcB+R/tcWQtpzlCojrybUd7Mxo=" crossorigin="anonymous"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div id="doc" class="markdown-body container-fluid comment-enabled" data-hard-breaks="true" style="position: relative;"><h1 id="Implementation-of-ShuffleNet" style=""><a class="anchor hidden-xs" href="#Implementation-of-ShuffleNet" title="Implementation-of-ShuffleNet"><span class="octicon octicon-link"></span></a>Implementation of ShuffleNet</h1><p>We will use the <a href="https://www.tensorflow.org/guide/keras/functional" target="_blank" rel="noopener">tensorflow.keras Functional API</a> to build ShuffleNet from the original paper: “<a href="https://arxiv.org/abs/1707.01083" target="_blank" rel="noopener">ShuffleNet: An Extremely Efficient Convolutional Neural Network for Mobile Devices</a>” by Xiangyu Zhang, Xinyu Zhou, Mengxiao Lin, Jian Sun.</p><hr><p>In the paper we can read:</p><blockquote>
+<p><strong>[i]</strong> “The first building block in each stage is applied with stride = 2. Other hyper-parameters within a stage stay the same, and for the next stage the output channels are doubled”.</p>
+<p><strong>[ii]</strong> “Similar to [9], we set the number of bottleneck channels to 1/4 of the output channels for each ShuffleNet unit"</p>
+<p><strong>[iii]</strong> “we add a Batch Normalization layer [15] after each of the convolutions to make end-to-end training easier.”</p>
+<p><strong>[iv]</strong> “Note that for Stage 2, we do not apply group convolution on the first pointwise layer because the number of input channels is relatively small.”</p>
+</blockquote><br><p>We will also make use of the following Table <strong>[v]</strong>:</p><img src="https://raw.githubusercontent.com/Machine-Learning-Tokyo/DL-workshop-series/master/Part%20I%20-%20Convolution%20Operations/images/ShuffleNet/ShuffleNet.png" width="600"><br><p>as well the following Diagrams <strong>[vi]</strong></p><img src="https://raw.githubusercontent.com/Machine-Learning-Tokyo/DL-workshop-series/master/Part%20I%20-%20Convolution%20Operations/images/ShuffleNet/ShuffleNet_diagram_1.png" width="600"><p><sub>Figure 2. ShuffleNet Units. a) bottleneck unit [9] with depthwise convolution (DWConv) [3, 12]; b) ShuffleNet unit with pointwise group convolution (GConv) and channel shuffle; c) ShuffleNet unit with stride = 2.</sub></p><p>and <strong>[vii]</strong><br>
+<img src="https://raw.githubusercontent.com/Machine-Learning-Tokyo/DL-workshop-series/master/Part%20I%20-%20Convolution%20Operations/images/ShuffleNet/ShuffleNet_diagram_2.png" width="600"></p><p><sub>Figure 1. Channel shuffle with two stacked group convolutions. GConv stands for group convolution. a) two stacked convolution layers with the same number of groups. Each output channel only relates to the input channels within the group. No cross talk; b) input and output channels are fully related when GConv2 takes data from different groups after GConv1; c) an equivalent implementation to b) using channel shuffle.</sub></p><hr><h2 id="Network-architecture" style=""><a class="anchor hidden-xs" href="#Network-architecture" title="Network-architecture"><span class="octicon octicon-link"></span></a>Network architecture</h2><p>Based on <strong>[v]</strong> the model starts with a stem of Convolution-Max Pool and continues with a number of <strong>Stages</strong> before the final Global Pool-Fully Connected layers.</p><p>Each <strong>Stage</strong> consists of two parts:</p><ol>
+<li>One <strong>Shufflenet block</strong> with strides 2 <strong>[vi.b]</strong></li>
+<li>a number of repeated <strong>Shufflenet blocks</strong> with strides 1 <strong>[vi.c]</strong></li>
+</ol><p>Each one of the right most columns of <strong>[v]</strong> corresponds to a model architecture with different number of internal groups (g). In our case we are going to implement the “<em>g = 8</em>” model, however the code will be general enough to support any other combination of number of:</p><ul>
+<li>groups</li>
+<li>stages</li>
+<li>repetitions per stage</li>
+</ul><h3 id="Shufflenet-block" style=""><a class="anchor hidden-xs" href="#Shufflenet-block" title="Shufflenet-block"><span class="octicon octicon-link"></span></a>Shufflenet block</h3><p>The Shufflenet block is the building block of this network. Similar to the ResNet block there are two variations of the block based on whether the spatial dimensions of the input tensor change (strides = 2) or not (strides = 1).</p><p>In the first case we apply a 3x3 Average Pool with strides 2 at the shortcut connection as depicted at <strong>[vi.c]</strong>.</p><p>The main branch of the block consists of:</p><ol>
+<li>1x1 <strong>Group Convolution</strong> with 1/4 filters (GConv) followed by Batch Normalization and ReLU (<strong>[ii]</strong>)</li>
+<li><strong>Channel Shuffle</strong> operation</li>
+<li>3x3 DepthWise Convolution (with or w/o strides=2) followed by Batch Normalizaion</li>
+<li>1x1 <strong>Group Convolution</strong> followed by Batch Normalizaion</li>
+</ol><p>The tensors of the main branch and the shortcut connection are then concatenated and a ReLU activation is applied to the output.</p><h3 id="Group-Convolution" style=""><a class="anchor hidden-xs" href="#Group-Convolution" title="Group-Convolution"><span class="octicon octicon-link"></span></a>Group Convolution</h3><p>The idea of <em>Group Convolution</em> is to separate the input tensor to g sub-tensors each one with <span class="mathjax"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-28-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mn>1</mn><mrow class=&quot;MJX-TeXAtom-ORD&quot;><mo>/</mo></mrow><mi>g</mi></math>" role="presentation" style="font-size: 118%; position: relative;"><span id="MJXc-Node-400" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-401" class="mjx-mrow"><span id="MJXc-Node-402" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.32em;">1</span></span><span id="MJXc-Node-403" class="mjx-texatom"><span id="MJXc-Node-404" class="mjx-mrow"><span id="MJXc-Node-405" class="mjx-mo"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.479em; padding-bottom: 0.585em;">/</span></span></span></span><span id="MJXc-Node-406" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.479em; padding-right: 0.003em;">g</span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mn>1</mn><mrow class="MJX-TeXAtom-ORD"><mo>/</mo></mrow><mi>g</mi></math></span></span><script type="math/tex" id="MathJax-Element-28">1/g</script></span> distinct channels of the initial tesnsor. Then we apply a 1x1 Convolution to each sub-tensor and finally we concatenate all the sub-tensors together (<strong>[vii]</strong>).</p><h3 id="Channel-Shuffle" style=""><a class="anchor hidden-xs" href="#Channel-Shuffle" title="Channel-Shuffle"><span class="octicon octicon-link"></span></a>Channel Shuffle</h3><p>Channel shuffle is an operation of shuffling the channels of the input tensor as shown at <strong>[vii.b,c]</strong>.<br>
+In order to shuffle the channels we</p><ol>
+<li>reshape the input tensor:</li>
+</ol><blockquote>
+<p>from: <code>width x height x channels</code></p>
+<p>to: <code>width x height x groups x (channels/groups)</code></p>
+</blockquote><ol start="2">
+<li>prermute the last two dimensions</li>
+<li>reshape the tensor to the original shape</li>
+</ol><p>A simple example of the results of this operation can be seen at the following application of the operation on a 6-element array</p><p><span class="mathjax"><span class="MathJax_Preview" style="color: inherit;"></span><span class="mjx-chtml MJXc-display" style="text-align: center;"><span id="MathJax-Element-20-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;><mtable rowspacing=&quot;4pt&quot; columnspacing=&quot;1em&quot;><mtr><mtd><mn>1</mn></mtd><mtd><mn>2</mn></mtd><mtd><mn>3</mn></mtd><mtd><mn>4</mn></mtd><mtd><mn>5</mn></mtd><mtd><mn>6</mn></mtd></mtr></mtable></math>" role="presentation" style="font-size: 118%; text-align: center; position: relative;"><span id="MJXc-Node-260" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-261" class="mjx-mrow"><span id="MJXc-Node-262" class="mjx-mtable" style="vertical-align: -0.25em; padding: 0px 0.167em;"><span class="mjx-table"><span id="MJXc-Node-263" class="mjx-mtr" style="height: 1em;"><span id="MJXc-Node-264" class="mjx-mtd" style="padding: 0px 0.5em 0px 0px; width: 0.5em;"><span id="MJXc-Node-265" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-266" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.32em;">1</span></span><span class="mjx-strut"></span></span></span><span id="MJXc-Node-267" class="mjx-mtd" style="padding: 0px 0.5em; width: 0.5em;"><span id="MJXc-Node-268" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-269" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.32em;">2</span></span><span class="mjx-strut"></span></span></span><span id="MJXc-Node-270" class="mjx-mtd" style="padding: 0px 0.5em; width: 0.5em;"><span id="MJXc-Node-271" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-272" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.373em;">3</span></span><span class="mjx-strut"></span></span></span><span id="MJXc-Node-273" class="mjx-mtd" style="padding: 0px 0.5em; width: 0.5em;"><span id="MJXc-Node-274" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-275" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.32em;">4</span></span><span class="mjx-strut"></span></span></span><span id="MJXc-Node-276" class="mjx-mtd" style="padding: 0px 0.5em; width: 0.5em;"><span id="MJXc-Node-277" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-278" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.373em;">5</span></span><span class="mjx-strut"></span></span></span><span id="MJXc-Node-279" class="mjx-mtd" style="padding: 0px 0px 0px 0.5em; width: 0.5em;"><span id="MJXc-Node-280" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-281" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.373em;">6</span></span><span class="mjx-strut"></span></span></span></span></span></span></span></span><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mtable rowspacing="4pt" columnspacing="1em"><mtr><mtd><mn>1</mn></mtd><mtd><mn>2</mn></mtd><mtd><mn>3</mn></mtd><mtd><mn>4</mn></mtd><mtd><mn>5</mn></mtd><mtd><mn>6</mn></mtd></mtr></mtable></math></span></span></span><script type="math/tex; mode=display" id="MathJax-Element-20">
+\begin{matrix} 1 & 2 & 3 & 4 & 5 & 6
+\end{matrix}
+</script></span></p><ol>
+<li>reshape to <span class="mathjax"><span class="MathJax_Preview" style="color: inherit;"></span><span id="MathJax-Element-21-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;><mi>g</mi><mi>r</mi><mi>o</mi><mi>u</mi><mi>p</mi><mi>s</mi><mo>&amp;#x00D7;</mo><mfrac><mi>n</mi><mrow><mi>g</mi><mi>r</mi><mi>o</mi><mi>u</mi><mi>p</mi><mi>s</mi></mrow></mfrac><mo stretchy=&quot;false&quot;>(</mo><mi>g</mi><mi>r</mi><mi>o</mi><mi>u</mi><mi>p</mi><mi>s</mi><mo>=</mo><mn>2</mn><mo stretchy=&quot;false&quot;>)</mo></math>" role="presentation" style="font-size: 118%; position: relative;"><span id="MJXc-Node-282" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-283" class="mjx-mrow"><span id="MJXc-Node-284" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.479em; padding-right: 0.003em;">g</span></span><span id="MJXc-Node-285" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.267em;">r</span></span><span id="MJXc-Node-286" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.267em;">o</span></span><span id="MJXc-Node-287" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.267em;">u</span></span><span id="MJXc-Node-288" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.479em;">p</span></span><span id="MJXc-Node-289" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.267em;">s</span></span><span id="MJXc-Node-290" class="mjx-mo MJXc-space2"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.215em; padding-bottom: 0.32em;">×</span></span><span id="MJXc-Node-291" class="mjx-mfrac MJXc-space2"><span class="mjx-box MJXc-stacked" style="width: 2.234em; padding: 0px 0.12em;"><span class="mjx-numerator" style="font-size: 70.7%; width: 3.16em; top: -1.086em;"><span id="MJXc-Node-292" class="mjx-mi" style=""><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.267em;">n</span></span></span><span class="mjx-denominator" style="font-size: 70.7%; width: 3.16em; bottom: -0.718em;"><span id="MJXc-Node-293" class="mjx-mrow" style=""><span id="MJXc-Node-294" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.479em; padding-right: 0.003em;">g</span></span><span id="MJXc-Node-295" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.267em;">r</span></span><span id="MJXc-Node-296" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.267em;">o</span></span><span id="MJXc-Node-297" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.267em;">u</span></span><span id="MJXc-Node-298" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.479em;">p</span></span><span id="MJXc-Node-299" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.267em;">s</span></span></span></span><span class="mjx-line" style="border-bottom: 1.3px solid; top: -0.283em; width: 2.234em;"></span></span><span class="mjx-vsize" style="height: 1.276em; vertical-align: -0.507em;"></span></span><span id="MJXc-Node-300" class="mjx-mo"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.479em; padding-bottom: 0.585em;">(</span></span><span id="MJXc-Node-301" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.479em; padding-right: 0.003em;">g</span></span><span id="MJXc-Node-302" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.267em;">r</span></span><span id="MJXc-Node-303" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.267em;">o</span></span><span id="MJXc-Node-304" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.267em;">u</span></span><span id="MJXc-Node-305" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.479em;">p</span></span><span id="MJXc-Node-306" class="mjx-mi"><span class="mjx-char MJXc-TeX-math-I" style="padding-top: 0.215em; padding-bottom: 0.267em;">s</span></span><span id="MJXc-Node-307" class="mjx-mo MJXc-space3"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.056em; padding-bottom: 0.32em;">=</span></span><span id="MJXc-Node-308" class="mjx-mn MJXc-space3"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.32em;">2</span></span><span id="MJXc-Node-309" class="mjx-mo"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.479em; padding-bottom: 0.585em;">)</span></span></span></span><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>g</mi><mi>r</mi><mi>o</mi><mi>u</mi><mi>p</mi><mi>s</mi><mo>×</mo><mfrac><mi>n</mi><mrow><mi>g</mi><mi>r</mi><mi>o</mi><mi>u</mi><mi>p</mi><mi>s</mi></mrow></mfrac><mo stretchy="false">(</mo><mi>g</mi><mi>r</mi><mi>o</mi><mi>u</mi><mi>p</mi><mi>s</mi><mo>=</mo><mn>2</mn><mo stretchy="false">)</mo></math></span></span><script type="math/tex" id="MathJax-Element-21">groups \times \frac{n}{groups} (groups=2)</script></span><br>
+<br><br>
+<br><br>
+<span class="mathjax"><span class="MathJax_Preview" style="color: inherit;"></span><span class="mjx-chtml MJXc-display" style="text-align: center;"><span id="MathJax-Element-22-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;><mtable rowspacing=&quot;4pt&quot; columnspacing=&quot;1em&quot;><mtr><mtd><mn>1</mn></mtd><mtd><mn>2</mn></mtd><mtd><mn>3</mn></mtd></mtr><mtr><mtd><mn>4</mn></mtd><mtd><mn>5</mn></mtd><mtd><mn>6</mn></mtd></mtr></mtable></math>" role="presentation" style="font-size: 118%; text-align: center; position: relative;"><span id="MJXc-Node-310" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-311" class="mjx-mrow"><span id="MJXc-Node-312" class="mjx-mtable" style="vertical-align: -0.95em; padding: 0px 0.167em;"><span class="mjx-table"><span id="MJXc-Node-313" class="mjx-mtr" style="height: 1.2em;"><span id="MJXc-Node-314" class="mjx-mtd" style="padding: 0px 0.5em 0px 0px; width: 0.5em;"><span id="MJXc-Node-315" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-316" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.32em;">1</span></span><span class="mjx-strut"></span></span></span><span id="MJXc-Node-317" class="mjx-mtd" style="padding: 0px 0.5em; width: 0.5em;"><span id="MJXc-Node-318" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-319" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.32em;">2</span></span><span class="mjx-strut"></span></span></span><span id="MJXc-Node-320" class="mjx-mtd" style="padding: 0px 0px 0px 0.5em; width: 0.5em;"><span id="MJXc-Node-321" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-322" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.373em;">3</span></span><span class="mjx-strut"></span></span></span></span><span id="MJXc-Node-323" class="mjx-mtr" style="height: 1.2em;"><span id="MJXc-Node-324" class="mjx-mtd" style="padding: 0.2em 0.5em 0px 0px;"><span id="MJXc-Node-325" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-326" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.32em;">4</span></span><span class="mjx-strut"></span></span></span><span id="MJXc-Node-327" class="mjx-mtd" style="padding: 0.2em 0.5em 0px;"><span id="MJXc-Node-328" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-329" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.373em;">5</span></span><span class="mjx-strut"></span></span></span><span id="MJXc-Node-330" class="mjx-mtd" style="padding: 0.2em 0px 0px 0.5em;"><span id="MJXc-Node-331" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-332" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.373em;">6</span></span><span class="mjx-strut"></span></span></span></span></span></span></span></span><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mtable rowspacing="4pt" columnspacing="1em"><mtr><mtd><mn>1</mn></mtd><mtd><mn>2</mn></mtd><mtd><mn>3</mn></mtd></mtr><mtr><mtd><mn>4</mn></mtd><mtd><mn>5</mn></mtd><mtd><mn>6</mn></mtd></mtr></mtable></math></span></span></span><script type="math/tex; mode=display" id="MathJax-Element-22">
+\begin{matrix} 
+1 & 2 & 3 \\
+4 & 5 & 6
+\end{matrix}
+</script></span><br>
+<br></li>
+<li>prermute the dimensions<br>
+<span class="mathjax"><span class="MathJax_Preview" style="color: inherit;"></span><span class="mjx-chtml MJXc-display" style="text-align: center;"><span id="MathJax-Element-23-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;><mtable rowspacing=&quot;4pt&quot; columnspacing=&quot;1em&quot;><mtr><mtd><mn>1</mn></mtd><mtd><mn>4</mn></mtd></mtr><mtr><mtd><mn>2</mn></mtd><mtd><mn>5</mn></mtd></mtr><mtr><mtd><mn>3</mn></mtd><mtd><mn>6</mn></mtd></mtr></mtable></math>" role="presentation" style="font-size: 119%; text-align: center; position: relative;"><span id="MJXc-Node-333" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-334" class="mjx-mrow"><span id="MJXc-Node-335" class="mjx-mtable" style="vertical-align: -1.65em; padding: 0px 0.167em;"><span class="mjx-table"><span id="MJXc-Node-336" class="mjx-mtr" style="height: 1.2em;"><span id="MJXc-Node-337" class="mjx-mtd" style="padding: 0px 0.5em 0px 0px; width: 0.5em;"><span id="MJXc-Node-338" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-339" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.37em; padding-bottom: 0.318em;">1</span></span><span class="mjx-strut"></span></span></span><span id="MJXc-Node-340" class="mjx-mtd" style="padding: 0px 0px 0px 0.5em; width: 0.5em;"><span id="MJXc-Node-341" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-342" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.37em; padding-bottom: 0.318em;">4</span></span><span class="mjx-strut"></span></span></span></span><span id="MJXc-Node-343" class="mjx-mtr" style="height: 1.4em;"><span id="MJXc-Node-344" class="mjx-mtd" style="padding: 0.2em 0.5em 0px 0px;"><span id="MJXc-Node-345" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-346" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.37em; padding-bottom: 0.318em;">2</span></span><span class="mjx-strut"></span></span></span><span id="MJXc-Node-347" class="mjx-mtd" style="padding: 0.2em 0px 0px 0.5em;"><span id="MJXc-Node-348" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-349" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.37em; padding-bottom: 0.37em;">5</span></span><span class="mjx-strut"></span></span></span></span><span id="MJXc-Node-350" class="mjx-mtr" style="height: 1.2em;"><span id="MJXc-Node-351" class="mjx-mtd" style="padding: 0.2em 0.5em 0px 0px;"><span id="MJXc-Node-352" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-353" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.37em; padding-bottom: 0.37em;">3</span></span><span class="mjx-strut"></span></span></span><span id="MJXc-Node-354" class="mjx-mtd" style="padding: 0.2em 0px 0px 0.5em;"><span id="MJXc-Node-355" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-356" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.37em; padding-bottom: 0.37em;">6</span></span><span class="mjx-strut"></span></span></span></span></span></span></span></span><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mtable rowspacing="4pt" columnspacing="1em"><mtr><mtd><mn>1</mn></mtd><mtd><mn>4</mn></mtd></mtr><mtr><mtd><mn>2</mn></mtd><mtd><mn>5</mn></mtd></mtr><mtr><mtd><mn>3</mn></mtd><mtd><mn>6</mn></mtd></mtr></mtable></math></span></span></span><script type="math/tex; mode=display" id="MathJax-Element-23">
+\begin{matrix} 
+1 & 4 \\
+2 & 5 \\
+3 & 6
+\end{matrix}
+</script></span><br>
+<br></li>
+<li>reshape to the original shape<br>
+<span class="mathjax"><span class="MathJax_Preview" style="color: inherit;"></span><span class="mjx-chtml MJXc-display" style="text-align: center;"><span id="MathJax-Element-24-Frame" class="mjx-chtml MathJax_CHTML" tabindex="0" data-mathml="<math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;><mtable rowspacing=&quot;4pt&quot; columnspacing=&quot;1em&quot;><mtr><mtd><mn>1</mn></mtd><mtd><mn>4</mn></mtd><mtd><mn>2</mn></mtd><mtd><mn>5</mn></mtd><mtd><mn>3</mn></mtd><mtd><mn>6</mn></mtd></mtr></mtable></math>" role="presentation" style="font-size: 118%; text-align: center; position: relative;"><span id="MJXc-Node-357" class="mjx-math" aria-hidden="true"><span id="MJXc-Node-358" class="mjx-mrow"><span id="MJXc-Node-359" class="mjx-mtable" style="vertical-align: -0.25em; padding: 0px 0.167em;"><span class="mjx-table"><span id="MJXc-Node-360" class="mjx-mtr" style="height: 1em;"><span id="MJXc-Node-361" class="mjx-mtd" style="padding: 0px 0.5em 0px 0px; width: 0.5em;"><span id="MJXc-Node-362" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-363" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.32em;">1</span></span><span class="mjx-strut"></span></span></span><span id="MJXc-Node-364" class="mjx-mtd" style="padding: 0px 0.5em; width: 0.5em;"><span id="MJXc-Node-365" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-366" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.32em;">4</span></span><span class="mjx-strut"></span></span></span><span id="MJXc-Node-367" class="mjx-mtd" style="padding: 0px 0.5em; width: 0.5em;"><span id="MJXc-Node-368" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-369" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.32em;">2</span></span><span class="mjx-strut"></span></span></span><span id="MJXc-Node-370" class="mjx-mtd" style="padding: 0px 0.5em; width: 0.5em;"><span id="MJXc-Node-371" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-372" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.373em;">5</span></span><span class="mjx-strut"></span></span></span><span id="MJXc-Node-373" class="mjx-mtd" style="padding: 0px 0.5em; width: 0.5em;"><span id="MJXc-Node-374" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-375" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.373em;">3</span></span><span class="mjx-strut"></span></span></span><span id="MJXc-Node-376" class="mjx-mtd" style="padding: 0px 0px 0px 0.5em; width: 0.5em;"><span id="MJXc-Node-377" class="mjx-mrow" style="margin-top: -0.2em;"><span id="MJXc-Node-378" class="mjx-mn"><span class="mjx-char MJXc-TeX-main-R" style="padding-top: 0.373em; padding-bottom: 0.373em;">6</span></span><span class="mjx-strut"></span></span></span></span></span></span></span></span><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mtable rowspacing="4pt" columnspacing="1em"><mtr><mtd><mn>1</mn></mtd><mtd><mn>4</mn></mtd><mtd><mn>2</mn></mtd><mtd><mn>5</mn></mtd><mtd><mn>3</mn></mtd><mtd><mn>6</mn></mtd></mtr></mtable></math></span></span></span><script type="math/tex; mode=display" id="MathJax-Element-24">
+\begin{matrix} 1 & 4 & 2 & 5 & 3 & 6
+\end{matrix}
+</script></span></li>
+</ol><hr><h2 id="Workflow" style=""><a class="anchor hidden-xs" href="#Workflow" title="Workflow"><span class="octicon octicon-link"></span></a>Workflow</h2><p>We will:</p><ol>
+<li>import the neccesary layers</li>
+<li>write a helper function for the <strong>Stage</strong></li>
+<li>write a helper function for the <strong>Shufflenet block</strong></li>
+<li>write a helper function for the <strong>Group Convolution</strong></li>
+<li>write a helper function for the <strong>Channel Shuffle</strong></li>
+<li>write the stem of the model</li>
+<li>use the helper function to write the main part of the model</li>
+<li>write the last part of the model and build it</li>
+</ol><hr><h3 id="1-Imports" style=""><a class="anchor hidden-xs" href="#1-Imports" title="1-Imports"><span class="octicon octicon-link"></span></a>1. Imports</h3><p><strong>Code:</strong></p><blockquote>
+<pre><code class="python hljs"><span class="hljs-keyword">from</span> tensorflow.keras.layers <span class="hljs-keyword">import</span> Input, Conv2D, DepthwiseConv2D, \
+     Dense, Concatenate, Add, ReLU, BatchNormalization, AvgPool2D, \
+     MaxPool2D, GlobalAvgPool2D, Reshape, Permute, Lambda
+</code></pre>
+</blockquote><hr><h3 id="2-Stage" style=""><a class="anchor hidden-xs" href="#2-Stage" title="2-Stage"><span class="octicon octicon-link"></span></a>2. Stage</h3><p>The Stage function will:</p><ul>
+<li>take as inputs:
+<ul>
+<li>a tensor (<strong><code>x</code></strong>)</li>
+<li>the number of channels (also called filters) (<strong><code>channels</code></strong>)</li>
+<li>the number of repetitions of the second part of the stage (<strong><code>repetitions</code></strong>)</li>
+<li>the number of groups for the Group Convolution blocks (<strong><code>groups</code></strong>)</li>
+</ul>
+</li>
+<li>run:
+<ul>
+<li>apply a Shufflenet block with strides=2</li>
+<li>apply <strong><code>repetitions</code></strong> times a Shufflenet block with strides=1</li>
+</ul>
+</li>
+<li>return the tensor</li>
+</ul><p><strong>Code:</strong></p><blockquote>
+<pre><code class="python hljs"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">stage</span><span class="hljs-params">(x, channels, repetitions, groups)</span>:</span>
+    x = shufflenet_block(x, channels=channels, strides=<span class="hljs-number">2</span>, groups=groups)
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(repetitions):
+        x = shufflenet_block(x, channels=channels, strides=<span class="hljs-number">1</span>, groups=groups)
+    <span class="hljs-keyword">return</span> x
+</code></pre>
+</blockquote><hr><h3 id="3-Shufflenet-block" style=""><a class="anchor hidden-xs" href="#3-Shufflenet-block" title="3-Shufflenet-block"><span class="octicon octicon-link"></span></a>3. Shufflenet block</h3><p>The Shufflenet block will:</p><ul>
+<li>take as inputs:
+<ul>
+<li>a tensor (<strong><code>tensor</code></strong>)</li>
+<li>the number of channels (<strong><code>channels</code></strong>)</li>
+<li>the strides (<strong><code>strides</code></strong>)</li>
+<li>the number of groups for the Group Convolution blocks (<strong><code>groups</code></strong>)</li>
+</ul>
+</li>
+<li>run:
+<ul>
+<li>apply a Group Convolution block with 1/4 <strong><code>channels</code></strong> channels followed by <em>Batch Normalizaion-ReLU</em></li>
+<li>apply <strong><code>Channel Shuffle</code></strong> to this tensor</li>
+<li>apply a <em>Depthwise Convolution</em> layer followed by <em>Batch Normalizaion</em></li>
+<li>if <strong><code>strides</code></strong> is 2:
+<ul>
+<li>subtract from <strong><code>channels</code></strong> the number of channels of <strong><code>tensor</code></strong> so that after the concatenation the output tensor will have <strong><code>channels</code></strong> channels</li>
+</ul>
+</li>
+<li>apply a Group Convolution block with <strong><code>channels</code></strong> channels  followed by <em>Batch Normalizaion</em></li>
+<li>if <strong><code>strides</code></strong> is 1:
+<ul>
+<li><em>add</em> this tensor with the input <strong><code>tensor</code></strong></li>
+</ul>
+</li>
+<li>else:
+<ul>
+<li>apply a 3x3 <em>Average Pool</em> with strides 2 (<strong>[vi]</strong>) to the input <strong><code>tensor</code></strong> and <em>concatenate</em> it with this tensor</li>
+</ul>
+</li>
+<li>apply <em>ReLU</em> activation to the tensor</li>
+</ul>
+</li>
+<li>return the tensor</li>
+</ul><p>Note that according to <strong>[iv]</strong> we should not apply Group Convolution to the first inupt (24 channels) and apply only the Convolution operation instead which we can code with a simple <code>if-else</code> statement. However, for the sake of clarity of the code we ommit it.</p><p><strong>Code:</strong></p><blockquote>
+<pre><code class="python hljs"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">shufflenet_block</span><span class="hljs-params">(tensor, channels, strides, groups)</span>:</span>
+    x = gconv(tensor, channels=channels // <span class="hljs-number">4</span>, groups=groups)
+    x = BatchNormalization()(x)
+    x = ReLU()(x)
+
+    x = channel_shuffle(x, groups)
+    x = DepthwiseConv2D(kernel_size=<span class="hljs-number">3</span>, strides=strides, padding=<span class="hljs-string">'same'</span>)(x)
+    x = BatchNormalization()(x)
+
+    <span class="hljs-keyword">if</span> strides == <span class="hljs-number">2</span>:
+        channels = channels - tensor.get_shape().as_list()[<span class="hljs-number">-1</span>]
+    x = gconv(x, channels=channels, groups=groups)
+    x = BatchNormalization()(x)
+
+    <span class="hljs-keyword">if</span> strides == <span class="hljs-number">1</span>:
+        x = Add()([tensor, x])
+    <span class="hljs-keyword">else</span>:
+        avg = AvgPool2D(pool_size=<span class="hljs-number">3</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(tensor)
+        x = Concatenate()([avg, x])
+
+    output = ReLU()(x)
+    <span class="hljs-keyword">return</span> output
+</code></pre>
+</blockquote><hr><h3 id="4-Group-Convolution" style=""><a class="anchor hidden-xs" href="#4-Group-Convolution" title="4-Group-Convolution"><span class="octicon octicon-link"></span></a>4. Group Convolution</h3><p>The Group Convolution function will:</p><ul>
+<li>take as inputs:
+<ul>
+<li>a tensor (<strong><code>tensor</code></strong>)</li>
+<li>the number of channels of the output tensor (<strong><code>channels</code></strong>)</li>
+<li>the number of groups (<strong><code>groups</code></strong>)</li>
+</ul>
+</li>
+<li>run:
+<ul>
+<li>get the number of channels (<strong><code>input_ch</code></strong>) of the input tensor using the get_shape() method</li>
+<li>calculate the number of channels per group (<strong><code>group_ch</code></strong>) by dividing <strong><code>input_ch</code></strong> by <strong><code>groups</code></strong></li>
+<li>calculate how many channels will have each group after the Convolution layer. It will be equal to <strong><code>channels</code></strong> divided by <strong><code>groups</code></strong></li>
+<li>for every group:
+<ul>
+<li>get the <strong><code>group_tensor</code></strong> which will be a sub-tensor of <strong><code>tensor</code></strong> with specific channels</li>
+<li>apply a 1x1 Convolution layer with <strong><code>output_ch</code></strong> channels</li>
+<li>add the tensor to a list (<strong><code>groups_list</code></strong>)</li>
+</ul>
+</li>
+<li><em>Concatenate</em> all the tensors of <strong><code>groups_list</code></strong> to one tensor</li>
+</ul>
+</li>
+<li>return the tensor</li>
+</ul><p>Note that there is a commented line in the code bellow. One can get a slice of a tensor by using the simple slicing notation <code>a[:, b:c, d:e]</code> but the code takes too long to run (as it is in the case of tensorflow.slice()). By using a Lambda layer and applying it on the tensor we have the same result but much faster.</p><p><strong>Code:</strong></p><blockquote>
+<pre><code class="python hljs"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">gconv</span><span class="hljs-params">(tensor, channels, groups)</span>:</span>
+    input_ch = tensor.get_shape().as_list()[<span class="hljs-number">-1</span>]
+    group_ch = input_ch // groups
+    output_ch = channels // groups
+    groups_list = []
+
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(groups):
+        group_tensor = tensor[:, :, :, i * group_ch: (i+<span class="hljs-number">1</span>) * group_ch]
+        <span class="hljs-comment"># group_tensor = Lambda(lambda x: x[:, :, :, i * group_ch: (i+1) * group_ch])(tensor)</span>
+        group_tensor = Conv2D(output_ch, <span class="hljs-number">1</span>)(group_tensor)
+        groups_list.append(group_tensor)
+
+    output = Concatenate()(groups_list)
+    <span class="hljs-keyword">return</span> output
+</code></pre>
+</blockquote><hr><h3 id="5-Channel-Shuffle" style=""><a class="anchor hidden-xs" href="#5-Channel-Shuffle" title="5-Channel-Shuffle"><span class="octicon octicon-link"></span></a>5. Channel Shuffle</h3><p>The Channel Shuffle function will:</p><ul>
+<li>take as inputs:
+<ul>
+<li>a tensor (<strong><code>x</code></strong>)</li>
+<li>the number of groups (<strong><code>groups</code></strong>)</li>
+</ul>
+</li>
+<li>run:
+<ul>
+<li>get the dimensions (<strong><code>width, height, channels</code></strong>) of the input tensor. Note that the first number of <code>x.get_shape().as_list()</code> will be the batch size.</li>
+<li>calculate the number of channels per group (<strong><code>group_ch</code></strong>)</li>
+<li>reshape <strong><code>x</code></strong> to <strong><code>width</code></strong> x <strong><code>height</code></strong> x <strong><code>group_ch</code></strong> x <strong><code>groups</code></strong></li>
+<li>permute the last two dimensions of the tensor (<strong><code>group_ch</code></strong> x <strong><code>groups</code></strong> -&gt; <strong><code>groups</code></strong> x <strong><code>group_ch</code></strong>)</li>
+<li>reshape <strong><code>x</code></strong> to its original shape (<strong><code>width</code></strong> x <strong><code>height</code></strong> x <strong><code>channels</code></strong>)</li>
+</ul>
+</li>
+<li>return the tensor</li>
+</ul><p><strong>Code:</strong></p><blockquote>
+<pre><code class="python hljs"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">channel_shuffle</span><span class="hljs-params">(x, groups)</span>:</span>  
+    _, width, height, channels = x.get_shape().as_list()
+    group_ch = channels // groups
+
+    x = Reshape([width, height, group_ch, groups])(x)
+    x = Permute([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">4</span>, <span class="hljs-number">3</span>])(x)
+    x = Reshape([width, height, channels])(x)
+    <span class="hljs-keyword">return</span> x
+</code></pre>
+</blockquote><hr><h3 id="6-Stem-of-the-model" style=""><a class="anchor hidden-xs" href="#6-Stem-of-the-model" title="6-Stem-of-the-model"><span class="octicon octicon-link"></span></a>6. Stem of the model</h3><p>Now we can start coding the model. We will start with the model’s stem. According to <strong>[v]</strong> the first layer of the model is a 3x3 Convolution layer with 24 filters followed by (<strong>[iii]</strong>) a BatchNormalization and a ReLU activation.</p><p>The next layer is a 3x3 Max Pool with strides 2.</p><p><strong>Code:</strong></p><blockquote>
+<pre><code class="python hljs">input = Input([<span class="hljs-number">224</span>, <span class="hljs-number">224</span>, <span class="hljs-number">3</span>])
+x = Conv2D(filters=<span class="hljs-number">24</span>, kernel_size=<span class="hljs-number">3</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(input)
+x = BatchNormalization()(x)
+x = ReLU()(x)
+x = MaxPool2D(pool_size=<span class="hljs-number">3</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(x)
+</code></pre>
+</blockquote><hr><h3 id="7-Main-part-of-the-model" style=""><a class="anchor hidden-xs" href="#7-Main-part-of-the-model" title="7-Main-part-of-the-model"><span class="octicon octicon-link"></span></a>7. Main part of the model</h3><p>The main part of the model consists of <strong><code>Stage</code></strong> blocks. We first define the hyperparameters <strong><code>repetitions</code></strong>, <strong><code>initial_channels</code></strong> acoording to <strong>[v]</strong> and <strong><code>groups</code></strong>. Then for each number of repetitions we calculate the number of channels according to <strong>[i]</strong> and apply the <code>stage()</code> function on the tensor.</p><p><strong>Code:</strong></p><blockquote>
+<pre><code class="python hljs">repetitions = <span class="hljs-number">3</span>, <span class="hljs-number">7</span>, <span class="hljs-number">3</span>
+initial_channels = <span class="hljs-number">384</span>
+groups = <span class="hljs-number">8</span>
+
+<span class="hljs-keyword">for</span> i, reps <span class="hljs-keyword">in</span> enumerate(repetitions):
+    channels = initial_channels * (<span class="hljs-number">2</span>**i)
+    x = stage(x, channels, reps, groups)
+</code></pre>
+</blockquote><hr><h3 id="8-Rest-of-the-model" style=""><a class="anchor hidden-xs" href="#8-Rest-of-the-model" title="8-Rest-of-the-model"><span class="octicon octicon-link"></span></a>8. Rest of the model</h3><p>The model closes with a Global Pool layer and a Fully Connected one with 1000 classes (<strong>[v]</strong>).</p><p><strong>Code:</strong></p><blockquote>
+<pre><code class="python hljs">x = GlobalAvgPool2D()(x)
+output = Dense(<span class="hljs-number">1000</span>, activation=<span class="hljs-string">'softmax'</span>)(x)
+
+<span class="hljs-keyword">from</span> tensorflow.keras <span class="hljs-keyword">import</span> Model
+model = Model(input, output)
+</code></pre>
+</blockquote><hr><h2 id="Final-code" style=""><a class="anchor hidden-xs" href="#Final-code" title="Final-code"><span class="octicon octicon-link"></span></a>Final code</h2><p><strong>Code:</strong></p><pre><code class="python hljs"><span class="hljs-keyword">from</span> tensorflow.keras.layers <span class="hljs-keyword">import</span> Input, Conv2D, DepthwiseConv2D, \
+     Dense, Concatenate, Add, ReLU, BatchNormalization, AvgPool2D, \
+     MaxPool2D, GlobalAvgPool2D, Reshape, Permute, Lambda
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">stage</span><span class="hljs-params">(x, channels, repetitions, groups)</span>:</span>
+    x = shufflenet_block(x, channels=channels, strides=<span class="hljs-number">2</span>, groups=groups)
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(repetitions):
+        x = shufflenet_block(x, channels=channels, strides=<span class="hljs-number">1</span>, groups=groups)
+    <span class="hljs-keyword">return</span> x
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">shufflenet_block</span><span class="hljs-params">(tensor, channels, strides, groups)</span>:</span>
+    x = gconv(tensor, channels=channels // <span class="hljs-number">4</span>, groups=groups)
+    x = BatchNormalization()(x)
+    x = ReLU()(x)
+ 
+    x = channel_shuffle(x, groups)
+    x = DepthwiseConv2D(kernel_size=<span class="hljs-number">3</span>, strides=strides, padding=<span class="hljs-string">'same'</span>)(x)
+    x = BatchNormalization()(x)
+ 
+    <span class="hljs-keyword">if</span> strides == <span class="hljs-number">2</span>:
+        channels = channels - tensor.get_shape().as_list()[<span class="hljs-number">-1</span>]
+    x = gconv(x, channels=channels, groups=groups)
+    x = BatchNormalization()(x)
+ 
+    <span class="hljs-keyword">if</span> strides == <span class="hljs-number">1</span>:
+        x = Add()([tensor, x])
+    <span class="hljs-keyword">else</span>:
+        avg = AvgPool2D(pool_size=<span class="hljs-number">3</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(tensor)
+        x = Concatenate()([avg, x])
+ 
+    output = ReLU()(x)
+    <span class="hljs-keyword">return</span> output
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">gconv</span><span class="hljs-params">(tensor, channels, groups)</span>:</span>
+    input_ch = tensor.get_shape().as_list()[<span class="hljs-number">-1</span>]
+    group_ch = input_ch // groups
+    output_ch = channels // groups
+    groups_list = []
+ 
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(groups):
+        <span class="hljs-comment"># group_tensor = tensor[:, :, :, i * group_ch: (i+1) * group_ch]</span>
+        group_tensor = Lambda(<span class="hljs-keyword">lambda</span> x: x[:, :, :, i * group_ch: (i+<span class="hljs-number">1</span>) * group_ch])(tensor)
+        group_tensor = Conv2D(output_ch, <span class="hljs-number">1</span>)(group_tensor)
+        groups_list.append(group_tensor)
+ 
+    output = Concatenate()(groups_list)
+    <span class="hljs-keyword">return</span> output
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">channel_shuffle</span><span class="hljs-params">(x, groups)</span>:</span>  
+    _, width, height, channels = x.get_shape().as_list()
+    group_ch = channels // groups
+ 
+    x = Reshape([width, height, group_ch, groups])(x)
+    x = Permute([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">4</span>, <span class="hljs-number">3</span>])(x)
+    x = Reshape([width, height, channels])(x)
+    <span class="hljs-keyword">return</span> x
+
+
+input = Input([<span class="hljs-number">224</span>, <span class="hljs-number">224</span>, <span class="hljs-number">3</span>])
+x = Conv2D(filters=<span class="hljs-number">24</span>, kernel_size=<span class="hljs-number">3</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(input)
+x = BatchNormalization()(x)
+x = ReLU()(x)
+x = MaxPool2D(pool_size=<span class="hljs-number">3</span>, strides=<span class="hljs-number">2</span>, padding=<span class="hljs-string">'same'</span>)(x)
+
+
+repetitions = <span class="hljs-number">3</span>, <span class="hljs-number">7</span>, <span class="hljs-number">3</span>
+initial_channels = <span class="hljs-number">384</span>
+groups = <span class="hljs-number">8</span>
+ 
+<span class="hljs-keyword">for</span> i, reps <span class="hljs-keyword">in</span> enumerate(repetitions):
+    channels = initial_channels * (<span class="hljs-number">2</span>**i)
+    x = stage(x, channels, reps, groups)
+
+
+x = GlobalAvgPool2D()(x)
+output = Dense(<span class="hljs-number">1000</span>, activation=<span class="hljs-string">'softmax'</span>)(x)
+ 
+<span class="hljs-keyword">from</span> tensorflow.keras <span class="hljs-keyword">import</span> Model
+model = Model(input, output)
+</code></pre><hr><h2 id="Model-diagram" style=""><a class="anchor hidden-xs" href="#Model-diagram" title="Model-diagram"><span class="octicon octicon-link"></span></a>Model diagram</h2><img src="https://raw.githubusercontent.com/Machine-Learning-Tokyo/CNN-Architectures/master/Implementations/ShuffleNet/ShuffleNet_diagram.svg?sanitize=true"></div>
+    <div class="ui-toc dropup unselectable hidden-print" style="display:none;">
+        <div class="pull-right dropdown">
+            <a id="tocLabel" class="ui-toc-label btn btn-default" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" title="Table of content">
+                <i class="fa fa-bars"></i>
+            </a>
+            <ul id="ui-toc" class="ui-toc-dropdown dropdown-menu" aria-labelledby="tocLabel">
+                <div class="toc"><ul class="nav">
+<li class=""><a href="#Implementation-of-ShuffleNet" title="Implementation of ShuffleNet">Implementation of ShuffleNet</a><ul class="nav">
+<li class=""><a href="#Network-architecture" title="Network architecture">Network architecture</a><ul class="nav">
+<li><a href="#Shufflenet-block" title="Shufflenet block">Shufflenet block</a></li>
+<li><a href="#Group-Convolution" title="Group Convolution">Group Convolution</a></li>
+<li><a href="#Channel-Shuffle" title="Channel Shuffle">Channel Shuffle</a></li>
+</ul>
+</li>
+<li class=""><a href="#Workflow" title="Workflow">Workflow</a><ul class="nav">
+<li><a href="#1-Imports" title="1. Imports">1. Imports</a></li>
+<li><a href="#2-Stage" title="2. Stage">2. Stage</a></li>
+<li><a href="#3-Shufflenet-block" title="3. Shufflenet block">3. Shufflenet block</a></li>
+<li><a href="#4-Group-Convolution" title="4. Group Convolution">4. Group Convolution</a></li>
+<li><a href="#5-Channel-Shuffle" title="5. Channel Shuffle">5. Channel Shuffle</a></li>
+<li><a href="#6-Stem-of-the-model" title="6. Stem of the model">6. Stem of the model</a></li>
+<li class=""><a href="#7-Main-part-of-the-model" title="7. Main part of the model">7. Main part of the model</a></li>
+<li><a href="#8-Rest-of-the-model" title="8. Rest of the model">8. Rest of the model</a></li>
+</ul>
+</li>
+<li><a href="#Final-code" title="Final code">Final code</a></li>
+<li><a href="#Model-diagram" title="Model diagram">Model diagram</a></li>
+</ul>
+</li>
+</ul>
+</div><div class="toc-menu"><a class="expand-toggle" href="#">Expand all</a><a class="back-to-top" href="#">Back to top</a><a class="go-to-bottom" href="#">Go to bottom</a></div>
+            </ul>
+        </div>
+    </div>
+    <div id="ui-toc-affix" class="ui-affix-toc ui-toc-dropdown unselectable hidden-print" data-spy="affix" style="top:17px;display:none;" null null>
+        <div class="toc"><ul class="nav">
+<li class=""><a href="#Implementation-of-ShuffleNet" title="Implementation of ShuffleNet">Implementation of ShuffleNet</a><ul class="nav">
+<li class=""><a href="#Network-architecture" title="Network architecture">Network architecture</a><ul class="nav">
+<li><a href="#Shufflenet-block" title="Shufflenet block">Shufflenet block</a></li>
+<li><a href="#Group-Convolution" title="Group Convolution">Group Convolution</a></li>
+<li><a href="#Channel-Shuffle" title="Channel Shuffle">Channel Shuffle</a></li>
+</ul>
+</li>
+<li class=""><a href="#Workflow" title="Workflow">Workflow</a><ul class="nav">
+<li><a href="#1-Imports" title="1. Imports">1. Imports</a></li>
+<li><a href="#2-Stage" title="2. Stage">2. Stage</a></li>
+<li><a href="#3-Shufflenet-block" title="3. Shufflenet block">3. Shufflenet block</a></li>
+<li><a href="#4-Group-Convolution" title="4. Group Convolution">4. Group Convolution</a></li>
+<li><a href="#5-Channel-Shuffle" title="5. Channel Shuffle">5. Channel Shuffle</a></li>
+<li><a href="#6-Stem-of-the-model" title="6. Stem of the model">6. Stem of the model</a></li>
+<li class=""><a href="#7-Main-part-of-the-model" title="7. Main part of the model">7. Main part of the model</a></li>
+<li><a href="#8-Rest-of-the-model" title="8. Rest of the model">8. Rest of the model</a></li>
+</ul>
+</li>
+<li><a href="#Final-code" title="Final code">Final code</a></li>
+<li><a href="#Model-diagram" title="Model diagram">Model diagram</a></li>
+</ul>
+</li>
+</ul>
+</div><div class="toc-menu"><a class="expand-toggle" href="#">Expand all</a><a class="back-to-top" href="#">Back to top</a><a class="go-to-bottom" href="#">Go to bottom</a></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gist-embed/2.6.0/gist-embed.min.js" integrity="sha256-KyF2D6xPIJUW5sUDSs93vWyZm+1RzIpKCexxElmxl8g=" crossorigin="anonymous" defer></script>
+    <script>
+        var markdown = $(".markdown-body");
+        //smooth all hash trigger scrolling
+        function smoothHashScroll() {
+            var hashElements = $("a[href^='#']").toArray();
+            for (var i = 0; i < hashElements.length; i++) {
+                var element = hashElements[i];
+                var $element = $(element);
+                var hash = element.hash;
+                if (hash) {
+                    $element.on('click', function (e) {
+                        // store hash
+                        var hash = this.hash;
+                        if ($(hash).length <= 0) return;
+                        // prevent default anchor click behavior
+                        e.preventDefault();
+                        // animate
+                        $('body, html').stop(true, true).animate({
+                            scrollTop: $(hash).offset().top
+                        }, 100, "linear", function () {
+                            // when done, add hash to url
+                            // (default click behaviour)
+                            window.location.hash = hash;
+                        });
+                    });
+                }
+            }
+        }
+
+        smoothHashScroll();
+        var toc = $('.ui-toc');
+        var tocAffix = $('.ui-affix-toc');
+        var tocDropdown = $('.ui-toc-dropdown');
+        //toc
+        tocDropdown.click(function (e) {
+            e.stopPropagation();
+        });
+
+        var enoughForAffixToc = true;
+
+        function generateScrollspy() {
+            $(document.body).scrollspy({
+                target: ''
+            });
+            $(document.body).scrollspy('refresh');
+            if (enoughForAffixToc) {
+                toc.hide();
+                tocAffix.show();
+            } else {
+                tocAffix.hide();
+                toc.show();
+            }
+            $(document.body).scroll();
+        }
+
+        function windowResize() {
+            //toc right
+            var paddingRight = parseFloat(markdown.css('padding-right'));
+            var right = ($(window).width() - (markdown.offset().left + markdown.outerWidth() - paddingRight));
+            toc.css('right', right + 'px');
+            //affix toc left
+            var newbool;
+            var rightMargin = (markdown.parent().outerWidth() - markdown.outerWidth()) / 2;
+            //for ipad or wider device
+            if (rightMargin >= 133) {
+                newbool = true;
+                var affixLeftMargin = (tocAffix.outerWidth() - tocAffix.width()) / 2;
+                var left = markdown.offset().left + markdown.outerWidth() - affixLeftMargin;
+                tocAffix.css('left', left + 'px');
+            } else {
+                newbool = false;
+            }
+            if (newbool != enoughForAffixToc) {
+                enoughForAffixToc = newbool;
+                generateScrollspy();
+            }
+        }
+        $(window).resize(function () {
+            windowResize();
+        });
+        $(document).ready(function () {
+            windowResize();
+            generateScrollspy();
+        });
+
+        //remove hash
+        function removeHash() {
+            window.location.hash = '';
+        }
+
+        var backtotop = $('.back-to-top');
+        var gotobottom = $('.go-to-bottom');
+
+        backtotop.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (scrollToTop)
+                scrollToTop();
+            removeHash();
+        });
+        gotobottom.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (scrollToBottom)
+                scrollToBottom();
+            removeHash();
+        });
+
+        var toggle = $('.expand-toggle');
+        var tocExpand = false;
+
+        checkExpandToggle();
+        toggle.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            tocExpand = !tocExpand;
+            checkExpandToggle();
+        })
+
+        function checkExpandToggle () {
+            var toc = $('.ui-toc-dropdown .toc');
+            var toggle = $('.expand-toggle');
+            if (!tocExpand) {
+                toc.removeClass('expand');
+                toggle.text('Expand all');
+            } else {
+                toc.addClass('expand');
+                toggle.text('Collapse all');
+            }
+        }
+
+        function scrollToTop() {
+            $('body, html').stop(true, true).animate({
+                scrollTop: 0
+            }, 100, "linear");
+        }
+
+        function scrollToBottom() {
+            $('body, html').stop(true, true).animate({
+                scrollTop: $(document.body)[0].scrollHeight
+            }, 100, "linear");
+        }
+    </script>
+</body>
+
+</html>
