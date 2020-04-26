@@ -77,34 +77,20 @@ In order to shuffle the channels we
 
 A simple example of the results of this operation can be seen at the following application of the operation on a 6-element array
 
-$$
-\begin{matrix} 1 & 2 & 3 & 4 & 5 & 6
-\end{matrix}
-$$
-1. reshape to $groups \times \frac{n}{groups} (groups=2)$
+<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{matrix}&space;1&space;&&space;2&space;&&space;3&space;&&space;4&space;&&space;5&space;&&space;6&space;\end{matrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{matrix}&space;1&space;&&space;2&space;&&space;3&space;&&space;4&space;&&space;5&space;&&space;6&space;\end{matrix}" title="\begin{matrix} 1 & 2 & 3 & 4 & 5 & 6 \end{matrix}" /></a>
+
+1. reshape to groups x (n / groups) (groups=2)
 <br>
 <br>
-$$
-\begin{matrix} 
-1 & 2 & 3 \\
-4 & 5 & 6
-\end{matrix}
-$$
+<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{matrix}&space;1&space;&&space;2&space;&&space;3\\&space;4&space;&&space;5&space;&&space;6&space;\end{matrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{matrix}&space;1&space;&&space;2&space;&&space;3\\&space;4&space;&&space;5&space;&&space;6&space;\end{matrix}" title="\begin{matrix} 1 & 2 & 3\\ 4 & 5 & 6 \end{matrix}" /></a>
 <br>
 2. prermute the dimensions
-$$
-\begin{matrix} 
-1 & 4 \\
-2 & 5 \\
-3 & 6
-\end{matrix}
-$$
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{matrix}&space;1&space;&&space;4\\&space;2&space;&&space;5\\&space;3&space;&&space;6&space;\end{matrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{matrix}&space;1&space;&&space;4\\&space;2&space;&&space;5\\&space;3&space;&&space;6&space;\end{matrix}" title="\begin{matrix} 1 & 4\\ 2 & 5\\ 3 & 6 \end{matrix}" /></a>
+
 <br>
 3. reshape to the original shape
-$$
-\begin{matrix} 1 & 4 & 2 & 5 & 3 & 6
-\end{matrix}
-$$
+<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{matrix}&space;1&space;&&space;2&space;&&space;3&space;&&space;4&space;&&space;5&space;&&space;6&space;\end{matrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{matrix}&space;1&space;&&space;2&space;&&space;3&space;&&space;4&space;&&space;5&space;&&space;6&space;\end{matrix}" title="\begin{matrix} 1 & 4 & 2 & 5 & 3 & 6 \end{matrix}" /></a>
 
 ---
 
