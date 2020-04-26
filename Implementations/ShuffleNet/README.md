@@ -2,6 +2,8 @@
 
 We will use the [tensorflow.keras Functional API](https://www.tensorflow.org/guide/keras/functional) to build ShuffleNet from the original paper: “[ShuffleNet: An Extremely Efficient Convolutional Neural Network for Mobile Devices](https://arxiv.org/abs/1707.01083)” by Xiangyu Zhang, Xinyu Zhou, Mengxiao Lin, Jian Sun.
 
+[Video tutorial](https://www.youtube.com/watch?v=lWMd_wJMeOE&list=PLaPdEEY26UXyE3UchW0C742xh542yh0yI&index=9)
+
 ---
 
 In the paper we can read:
