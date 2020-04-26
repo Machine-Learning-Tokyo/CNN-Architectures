@@ -90,7 +90,7 @@ A simple example of the results of this operation can be seen at the following a
 
 <br>
 3. reshape to the original shape
-<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{matrix}&space;1&space;&&space;2&space;&&space;3&space;&&space;4&space;&&space;5&space;&&space;6&space;\end{matrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{matrix}&space;1&space;&&space;2&space;&&space;3&space;&&space;4&space;&&space;5&space;&&space;6&space;\end{matrix}" title="\begin{matrix} 1 & 4 & 2 & 5 & 3 & 6 \end{matrix}" /></a>
+<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{matrix}&space;1&space;&&space;4&space;&&space;2&space;&&space;5&space;&&space;3&space;&&space;6&space;\end{matrix}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{matrix}&space;1&space;&&space;4&space;&&space;2&space;&&space;5&space;&&space;3&space;&&space;6&space;\end{matrix}" title="\begin{matrix} 1 & 4 & 2 & 5 & 3 & 6 \end{matrix}" /></a>
 
 ---
 
