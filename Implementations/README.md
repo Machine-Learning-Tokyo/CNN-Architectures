@@ -22,6 +22,12 @@ There is also a [series of videos](https://www.youtube.com/watch?v=rFpzCPcI6O0&l
   - [[Notebook]](https://github.com/Machine-Learning-Tokyo/CNN-Architectures/tree/master/Implementations/ResNet) [[Video]](https://www.youtube.com/watch?v=oeIMmtUroi0&list=PLaPdEEY26UXyE3UchW0C742xh542yh0yI&index=5)
 - **Xception**
   - [[Notebook]](https://github.com/Machine-Learning-Tokyo/CNN-Architectures/tree/master/Implementations/Xception) [[Video]](https://www.youtube.com/watch?v=nMBCSroJ7bY&list=PLaPdEEY26UXyE3UchW0C742xh542yh0yI&index=6)
+- **SqueezeNet**
+  - [[Notebook]](https://github.com/Machine-Learning-Tokyo/CNN-Architectures/tree/master/Implementations/SqueezeNet) [[Video]](https://www.youtube.com/watch?v=W4UbinapGMY&list=PLaPdEEY26UXyE3UchW0C742xh542yh0yI&index=7)
+- **DenseNet**
+  - [[Notebook]](https://github.com/Machine-Learning-Tokyo/CNN-Architectures/tree/master/Implementations/DenseNet) [[Video]](https://www.youtube.com/watch?v=3ZPJyknZolE&list=PLaPdEEY26UXyE3UchW0C742xh542yh0yI&index=8)
+- **ShuffleNet**
+  - [[Notebook]](https://github.com/Machine-Learning-Tokyo/CNN-Architectures/tree/master/Implementations/ShuffleNet) [[Video]](https://www.youtube.com/watch?v=lWMd_wJMeOE&list=PLaPdEEY26UXyE3UchW0C742xh542yh0yI&index=9)
 
 
 ### Disclaimer
