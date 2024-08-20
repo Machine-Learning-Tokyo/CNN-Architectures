@@ -1,121 +1,163 @@
-# LeNet-5: Gradient-Based Learning Applied to Document Recognition
 
-LeNet-5 is a highly efficient convolutional neural network (CNN) designed for handwritten character recognition. This model was introduced in the paper [*Gradient-Based Learning Applied to Document Recognition*](http://yann.lecun.com/exdb/publis/pdf/lecun-98.pdf) by **Yann LeCun, Léon Bottou, Yoshua Bengio, and Patrick Haffner**. The paper was published in the *Proceedings of the IEEE (1998)*.
+---
 
-![LeNet-5 Architecture](https://raw.githubusercontent.com/entbappy/Branching-tutorial/master/lenet/lenet-5.png)
+# Implementation of LeNet-5
 
-## Table of Contents
-- [Introduction](#introduction)
-- [Network Structure](#network-structure)
-  - [Input Layer](#input-layer)
-  - [C1: Convolutional Layer](#c1-convolutional-layer)
-  - [S2: Pooling Layer (Downsampling)](#s2-pooling-layer-downsampling)
-  - [C3: Convolutional Layer](#c3-convolutional-layer)
-  - [S4: Pooling Layer (Downsampling)](#s4-pooling-layer-downsampling)
-  - [C5: Convolutional Layer](#c5-convolutional-layer)
-  - [F6: Fully Connected Layer](#f6-fully-connected-layer)
-  - [Output Layer: Fully Connected Layer](#output-layer-fully-connected-layer)
-- [Summary](#summary)
-- [References](#references)
+We will use the [tensorflow.keras Sequential API](https://www.tensorflow.org/guide/keras/sequential_model) to build LeNet-5 from the original paper: “[Gradient-Based Learning Applied to Document Recognition](http://yann.lecun.com/exdb/publis/pdf/lecun-98.pdf)” by Yann LeCun, Léon Bottou, Yoshua Bengio, and Patrick Haffner.
 
-## Introduction
+[Video tutorial](https://www.youtube.com/watch?v=rFpzCPcI6O0&list=PLaPdEEY26UXyE3UchW0C742xh542yh0yI&index=1)
 
-LeNet-5 is a seminal convolutional neural network architecture that laid the foundation for modern deep learning techniques. It was primarily designed for recognizing handwritten digits and characters, a task that was challenging before the advent of deep learning.
+---
 
-The network consists of several convolutional layers followed by pooling (downsampling) layers and fully connected layers, making it highly efficient in extracting features and reducing the dimensionality of input data.
+In the paper, we can read:
 
-## Network Structure
+>**[i]** "The input image is 32x32 pixels, and is passed through a series of convolutional, pooling, and fully-connected layers."
+>
+>**[ii]** "The first convolutional layer uses 6 kernels of size 5x5 to produce 6 feature maps of size 28x28."
+>
+>**[iii]** "The pooling layers use a 2x2 kernel to reduce the size of the feature maps by half."
+>
+>**[iv]** "The second convolutional layer uses 16 kernels of size 5x5 to produce 16 feature maps of size 10x10."
+>
+>**[v]** "The third layer is a fully-connected layer with 120 units."
+>
+>**[vi]** "The output layer has 10 units, one for each class, with a softmax activation function."
 
-LeNet-5 is composed of seven layers (excluding the input layer), each containing trainable parameters. It incorporates the basic modules of deep learning: convolutional layers, pooling layers, and fully connected layers. The architecture of LeNet-5 is foundational for many other deep learning models.
+<br>
 
-### Input Layer
+We will also use the following Diagram **[vii]**:
 
-- **Image Size**: 32x32 (normalized input image)
-- *Note*: The input layer is not counted as part of the network structure.
+![LeNet-5](https://raw.githubusercontent.com/entbappy/Branching-tutorial/master/lenet/lenet-5.png)
 
-### C1: Convolutional Layer
+---
 
-- **Input Size**: 32x32
-- **Convolution Kernel**: 5x5
-- **Number of Filters**: 6
-- **Output Size**: 28x28
-- **Number of Neurons**: 28x28x6
-- **Trainable Parameters**: 156 (6 filters with 25 weights and 1 bias each)
-- **Connections**: 122,304
+## Network architecture
 
-**Description**:
-- The first convolution operation is performed on the input image using 6 convolution kernels of size 5x5, resulting in 6 feature maps of size 28x28.
+- The network consists of 2 *Convolutional* layers, 2 *Pooling* layers, and 3 *Fully Connected* Layers (**[vii]**).
 
-### S2: Pooling Layer (Downsampling)
+- *Pooling* is applied after each convolutional layer:
+  - C1 → S2 (**[iii]**)
+  - C3 → S4 (**[iii]**)
 
-- **Input Size**: 28x28
-- **Pooling Area**: 2x2
-- **Output Size**: 14x14
-- **Number of Feature Maps**: 6
-- **Trainable Parameters**: 12
-- **Connections**: 5,880
+---
 
-**Description**:
-- Pooling is performed using 2x2 kernels, producing 6 feature maps of size 14x14. Each feature map in S2 is a downsampled version of the corresponding feature map in C1.
+## Workflow
+We will:
+1. Import the necessary layers
+2. Demonstrate how the Sequential API works
+3. Write the code for the first block
+4. Write the code for the second block
+5. Write the code for the fully-connected layers
+6. Build the model
 
-### C3: Convolutional Layer
+---
 
-- **Input Size**: 14x14
-- **Convolution Kernel**: 5x5
-- **Number of Filters**: 16
-- **Output Size**: 10x10
-- **Trainable Parameters**: 1,516
-- **Connections**: 151,600
+### 1. Imports
+**Code:**
+>```python
+>from tensorflow.keras.models import Sequential
+>from tensorflow.keras.layers import Conv2D, AveragePooling2D, Flatten, Dense
+>```
 
-**Description**:
-- This layer consists of 16 convolutional filters, each producing a 10x10 feature map. The feature maps in C3 are a combination of the feature maps in S2.
+---
 
-### S4: Pooling Layer (Downsampling)
+### 2. Sequential API
+LeNet-5 can be implemented using the Sequential API, which allows us to stack layers sequentially.
 
-- **Input Size**: 10x10
-- **Pooling Area**: 2x2
-- **Output Size**: 5x5
-- **Number of Feature Maps**: 16
-- **Trainable Parameters**: 32
-- **Connections**: 2,000
+**Code:**
+>```python
+>model = Sequential()
+>```
 
-**Description**:
-- Similar to S2, this layer performs downsampling, producing 16 feature maps of size 5x5. Each feature map in S4 is a downsampled version of the corresponding feature map in C3.
+---
 
-### C5: Convolutional Layer
+### 3. 1st block
+The first block includes the first convolutional layer followed by a pooling layer.
 
-- **Input Size**: 5x5
-- **Convolution Kernel**: 5x5
-- **Number of Filters**: 120
-- **Output Size**: 1x1
-- **Trainable Parameters**: 48,120
-- **Connections**: 48,120
+From the paper:
 
-**Description**:
-- The C5 layer performs convolution with 120 filters, each of size 5x5, producing a 1x1 output. This layer is fully connected to the previous layer's feature maps.
+>The first convolutional layer uses **6 kernels** of size **5x5** to produce 6 feature maps of size **28x28** (**[ii]**)
 
-### F6: Fully Connected Layer
+**Code:**
 
-- **Input**: 120-dimensional vector
-- **Output**: 84-dimensional vector
-- **Trainable Parameters**: 10,164
+>```python
+>model.add(Conv2D(filters=6, kernel_size=5, strides=1, activation='tanh', input_shape=(32, 32, 1)))
+>model.add(AveragePooling2D(pool_size=2, strides=2))
+>```
 
-**Description**:
-- The F6 layer is a fully connected layer with 84 nodes. Each node corresponds to a possible output class and is connected to all nodes in the previous layer.
+---
 
-### Output Layer: Fully Connected Layer
+### 4. 2nd block
+The second block includes the second convolutional layer followed by another pooling layer.
 
-- **Number of Nodes**: 10 (corresponding to digits 0-9)
-- **Trainable Parameters**: 840
-- **Connections**: 840
+From the paper:
 
-**Description**:
-- The output layer consists of 10 nodes, each representing a digit from 0 to 9. The final output is determined by the node with the highest activation.
+>The second convolutional layer uses **16 kernels** of size **5x5** to produce 16 feature maps of size **10x10** (**[iv]**)
 
-## Summary
+**Code:**
 
-LeNet-5 demonstrates the power of convolutional neural networks in efficiently recognizing handwritten characters. Its use of local connections, shared weights, and pooling layers significantly reduces the number of parameters, making it an efficient model for document recognition.
+>```python
+>model.add(Conv2D(filters=16, kernel_size=5, strides=1, activation='tanh'))
+>model.add(AveragePooling2D(pool_size=2, strides=2))
+>```
 
-## References
+---
 
-- LeCun, Y., Bottou, L., Bengio, Y., & Haffner, P. (1998). [*Gradient-Based Learning Applied to Document Recognition*](http://yann.lecun.com/exdb/publis/pdf/lecun-98.pdf). *Proceedings of the IEEE*.
+### 5. Fully Connected Layers
+Finally, we flatten the output and pass it through fully-connected layers.
+
+From the paper:
+
+>The first fully-connected layer has **120 units** (**[v]**), followed by another fully-connected layer with **84 units**, and finally, an output layer with **10 units** (**[vi]**).
+
+**Code:**
+>```python
+>model.add(Flatten())
+>model.add(Dense(units=120, activation='tanh'))
+>model.add(Dense(units=84, activation='tanh'))
+>model.add(Dense(units=10, activation='softmax'))
+>```
+
+---
+
+### 6. Model
+
+In order to build the model, we just compile it:
+
+**Code:**
+>```python
+>model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+>```
+
+---
+
+## Final code
+
+**Code:**
+```python
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, AveragePooling2D, Flatten, Dense
+
+model = Sequential()
+
+model.add(Conv2D(filters=6, kernel_size=5, strides=1, activation='tanh', input_shape=(32, 32, 1)))
+model.add(AveragePooling2D(pool_size=2, strides=2))
+
+model.add(Conv2D(filters=16, kernel_size=5, strides=1, activation='tanh'))
+model.add(AveragePooling2D(pool_size=2, strides=2))
+
+model.add(Flatten())
+model.add(Dense(units=120, activation='tanh'))
+model.add(Dense(units=84, activation='tanh'))
+model.add(Dense(units=10, activation='softmax'))
+
+model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+```
+
+---
+
+## Model diagram
+
+![LeNet-5](https://raw.githubusercontent.com/entbappy/Branching-tutorial/master/lenet/arch.jpg)
+
+---
